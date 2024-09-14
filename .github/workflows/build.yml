@@ -2,8 +2,8 @@ name: Build
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - master  
 
 jobs:
   build-docker-image:
@@ -42,6 +42,6 @@ jobs:
           push: true
           tags: |
             erfjab/servermanagerbot:latest
-            erfjab/servermanagerbot:${{ github.ref_name }}
+            erfjab/servermanagerbot:${{ github.sha }}
             ghcr.io/erfjab/servermanagerbot:latest
-            ghcr.io/erfjab/servermanagerbot:${{ github.ref_name }}
+            ghcr.io/erfjab/servermanagerbot:${{ github.sha }}

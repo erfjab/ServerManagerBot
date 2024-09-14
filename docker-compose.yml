@@ -1,0 +1,6 @@
+services:
+  ServerManagerBot:
+    image: erfjab/ServerManagerBot:latest
+    restart: always
+    volumes:
+      - ./data/:/code/data/

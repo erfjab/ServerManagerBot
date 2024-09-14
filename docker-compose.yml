@@ -1,0 +1,8 @@
+services:
+  ServerManagerBot:
+    image: erfjab/ServerManagerBot:latest
+    restart: always
+    env_file: .env
+    network_mode: host
+    volumes:
+      - ./data/:/code/data/

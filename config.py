@@ -1,9 +1,11 @@
 import json
-from log import logger
 from typing import Dict, Optional
 
+from log import logger
+
 # Configuration file path
-CONFIG_FILE = '.json'
+CONFIG_FILE = 'data/.info.json'
+
 
 class ConfigManager:
     _config: Optional[Dict] = None
@@ -12,7 +14,7 @@ class ConfigManager:
     def _load_config() -> Optional[Dict]:
         """
         Load configuration from the JSON file.
-        
+
         Returns:
             Optional[Dict]: The loaded configuration as a dictionary if successful, 
                              None if there was an error.
@@ -32,7 +34,7 @@ class ConfigManager:
         """
         Retrieve the configuration from the cache. 
         If not cached, load it from the file.
-        
+
         Returns:
             Optional[Dict]: The configuration dictionary if successful, None otherwise.
         """
@@ -44,10 +46,10 @@ class ConfigManager:
     def get_admin_key(admin_chatid: int) -> Optional[str]:
         """
         Get the Hetzner API key for a specific admin chat ID.
-        
+
         Args:
             admin_chatid (int): The chat ID of the admin.
-        
+
         Returns:
             Optional[str]: The Hetzner API key if the admin chat ID exists, None otherwise.
         """
@@ -61,7 +63,7 @@ class ConfigManager:
     def get_bot_token() -> Optional[str]:
         """
         Get the Telegram bot token.
-        
+
         Returns:
             Optional[str]: The Telegram bot token if available, None otherwise.
         """
@@ -74,7 +76,7 @@ class ConfigManager:
     def get_all_admin_keys() -> Optional[Dict[int, str]]:
         """
         Get a dictionary of all admin chat IDs and their corresponding Hetzner API keys.
-        
+
         Returns:
             Optional[Dict[int, str]]: A dictionary mapping admin chat IDs to Hetzner API keys,
                                        or None if configuration could not be loaded.
@@ -88,10 +90,10 @@ class ConfigManager:
     def is_admin(chat_id: int) -> bool:
         """
         Check if a given chat ID is an admin.
-        
+
         Args:
             chat_id (int): The chat ID to check.
-        
+
         Returns:
             bool: True if the chat ID is an admin, False otherwise.
         """

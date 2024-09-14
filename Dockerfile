@@ -12,4 +12,4 @@ COPY . .
 
 RUN chmod +x main.py
 
-CMD [ "./main.py" ]
+CMD [ "python3", "main.py" ]

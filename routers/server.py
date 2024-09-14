@@ -41,7 +41,7 @@ async def server_info(callback: CallbackQuery, callback_data: ServerAction, serv
             text=MessageText.ServerInfo.format(
                 name=server.name,
                 status=server.status,
-                ip=server.public_net.ipv4.ip,
+                ip=server.public_net.ipv4.ip if server.public_net.ipv4.ip else 'No IPV4',
                 ram=server.server_type.memory,
                 cpu=server.server_type.cores,
                 created=server.created.strftime('%Y-%m-%d'),

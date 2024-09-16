@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from hcloud.servers.domain import Server
 from models.callbacks import ServerAction, ServerList
 from models.servers import Actions
@@ -20,6 +20,10 @@ def server_list_keyboard(servers: list[Server]) -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text=KeyboardText.Update,
             callback_data=ServerList(action=Actions.Home).pack()
+        ),
+        InlineKeyboardButton(
+            text=KeyboardText.Hetzner,
+            web_app=WebAppInfo(url='https://accounts.hetzner.com/login')
         )
     ])
     

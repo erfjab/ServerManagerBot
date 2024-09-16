@@ -1,7 +1,7 @@
 from enum import Enum
 
 class KeyboardText(str, Enum):
-    Update = '🔄 Update Servers List'
+    Update = '🔄 Update Servers'
     PowerOn = '🟢 Power On'
     PowerOff = '🔴 Power Off'
     Reboot = '🔄 Reboot'
@@ -13,6 +13,7 @@ class KeyboardText(str, Enum):
     Rebuild = '🔧 Rebuild'
     UpdateServer = '🔄 Update Info'
     Reset = '🔄 Reset'
+    Hetzner = '🟥 Hetzner'
 
 class MessageText(str, Enum):
     Start = '👋 Welcome to ServerManagerBot\nDevelop and Design by @ErfJabs'
@@ -21,11 +22,14 @@ class MessageText(str, Enum):
     ServerIsUpdated = '✅ Server is updated!'
     ServerInfo = (
         '<b>{status_emoji} Name:</b> <code>{name}</code> [<code>{status}</code>]\n'
-        '<b>🔗 IP:</b> <code>{ip}</code> [<code>{country}, {city}</code>]\n'
+        '<b>🔗 IPV4:</b> <code>{ipv4}</code>\n'
+        '<b>🔗 IPV6:</b> <code>{ipv6}</code>\n'
+        '<b>🏛️ County:</b> <code>{country}, {city}</code>\n'
         '<b>⚙️ Cpu:</b> <code>{cpu} Core</code>\n'
         '<b>🗂️ Ram:</b> <code>{ram} GB</code>\n'
         '<b>🗃️ Disk:</b> <code>{disk} GB</code>\n'
         '<b>🎟️ Image:</b> <code>{image}</code>\n'
+        '<b>⚡ Traffic:</b> <code>{traffic} GB</code>\n'
         '<b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]\n'
         '<b>🔑 Password:</b> <code>{password}</code>'
     )

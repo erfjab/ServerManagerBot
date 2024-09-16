@@ -41,7 +41,8 @@ async def server_info(callback: CallbackQuery, callback_data: ServerAction, serv
             text=MessageText.ServerInfo.format(
                 name=server.name,
                 status=server.status,
-                ip=server.public_net.ipv4.ip if server.public_net.ipv4 else 'NO IPV4',
+                ipv4=server.public_net.ipv4.ip if server.public_net.ipv4 else 'NO IPV4',
+                ipv6=server.public_net.ipv6.ip if server.public_net.ipv6 else 'NO IPV6',
                 ram=server.server_type.memory,
                 cpu=server.server_type.cores,
                 created=server.created.strftime('%Y-%m-%d'),
@@ -52,6 +53,7 @@ async def server_info(callback: CallbackQuery, callback_data: ServerAction, serv
                 status_emoji=status_emoji,
                 created_day=(datetime.now(tz=timezone.utc) - server.created).days,
                 disk=server.server_type.disk,
+                traffic=round(((server.ingoing_traffic or 0) + (server.outgoing_traffic or 0)) / 1024**3, 3),
             ),
             reply_markup=server_action_keyboard(server.id)
         )

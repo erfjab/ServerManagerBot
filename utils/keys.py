@@ -82,6 +82,8 @@ def confirm_action_keyboard(action: str, server_id: int, image_id= int) -> Inlin
 def rebuild_keyboard(images: list[Image], server_id: int) -> InlineKeyboardMarkup:
     latest_images: dict[str, Image] = {}
     for image in images:
+        if not image.name:
+            continue
         if image.name not in latest_images or image.created > latest_images[image.name].created:
             latest_images[image.name] = image
     

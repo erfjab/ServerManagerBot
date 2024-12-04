@@ -30,4 +30,7 @@ class MessageTextsFile(BaseSettings):
     CONFIRM_ACTION: str = "Are you sure you want to <b>{action}</b> this server?"
     IMAGE_LIST: str = "🖼️ Select your image:"
     WAIT: str = "⏳ Please wait..."
-    SELECT_SERVER_TYPE: str = "🗃️ Select Server:"
+    SELECT_SERVER_TYPE: str = "🗃️ Select Server:\nC: Core\nM: Memory\nP: Monthly Price"
+    SELECT_LOCATION_TYPE: str = "👀 Select location:"
+    SELECT_IMAGE_TYPE: str = "🖼️ Select image:"
+    SERVER_CREATED: str = "✅ is created!"

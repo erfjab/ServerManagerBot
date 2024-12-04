@@ -45,6 +45,10 @@ class HetznerManager:
         return self.client.servers.get_by_id(server_id)
 
     @handle_hetzner_errors
+    async def get_server_type(self, server_id: int) -> Optional[ServerType]:
+        return self.client.server_types.get_by_id(server_id)
+
+    @handle_hetzner_errors
     async def power_on(self, server: Server) -> Optional[Action]:
         return self.client.servers.power_on(server)
 
@@ -69,8 +73,8 @@ class HetznerManager:
         return self.client.servers.reset(server)
 
     @handle_hetzner_errors
-    async def get_images(self) -> List[Image]:
-        return self.client.images.get_all()
+    async def get_images(self, arch: str = None) -> List[Image]:
+        return self.client.images.get_all(architecture=arch)
 
     @handle_hetzner_errors
     async def rebuild_server(self, server: Server, image_id: int) -> Optional[Action]:
@@ -79,22 +83,24 @@ class HetznerManager:
 
     @handle_hetzner_errors
     async def create_server(
-        self, name: str, server_type: str, image_id: int, datacenter: str
+        self, name: str, server_type: ServerType, image: Image
     ) -> Optional[Server]:
         server = self.client.servers.create(
-            name=name,
-            server_type=server_type,
-            image=self.client.images.get_by_id(image_id),
-            datacenter=datacenter,
+            name=name, server_type=server_type, image=image
         )
         return server.server
 
+    async def get_image(self, id: int) -> Optional[Image]:
+        return self.client.images.get_by_id(id)
+
     @handle_hetzner_errors
     async def get_server_types(self) -> List[ServerType]:
-        server_types = self.client.server_types.get_all()
-        return server_types
+        return self.client.server_types.get_all()
 
     @handle_hetzner_errors
     async def get_datacenters(self) -> List[Datacenter]:
-        datacenters = self.client.datacenters.get_all()
-        return datacenters
+        return self.client.datacenters.get_all()
+
+    @handle_hetzner_errors
+    async def get_datacenter(self, id: int) -> Optional[Datacenter]:
+        return self.client.datacenters.get_by_id(id)

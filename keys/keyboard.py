@@ -4,13 +4,21 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from hcloud.servers.domain import Server
 from hcloud.images.domain import Image
 from hcloud.server_types.domain import ServerType
+from hcloud.datacenters.domain import Datacenter
 
-from .callback import ServerAction, ServerList, ServerTypeSelect
+from .callback import ServerAction, ServerList, ServerTypeSelect, LocationTypeSelect, ImageTypeSelect
 from .action import Actions
 from language import KeyboardText
 
 
 class KeyboardsCreater:
+    def home(self):
+        builder = InlineKeyboardBuilder()
+        builder.button(
+            text=KeyboardText.BACK, callback_data=ServerList(action=Actions.HOME).pack()
+        )
+        return builder.as_markup()
+
     def menu(self, servers: list[Server]):
         builder = InlineKeyboardBuilder()
 
@@ -31,7 +39,7 @@ class KeyboardsCreater:
                 callback_data=ServerList(action=Actions.HOME).pack(),
             ),
             InlineKeyboardButton(
-                text=KeyboardText.CREATE, callback_data=ServerTypeSelect().pack()
+                text=KeyboardText.CREATE, callback_data=LocationTypeSelect().pack()
             ),
         )
 
@@ -61,7 +69,7 @@ class KeyboardsCreater:
             text=KeyboardText.BACK, callback_data=ServerList(action=Actions.HOME).pack()
         )
 
-        builder.adjust(2, 1)
+        builder.adjust(2)
         return builder.as_markup()
 
     def confirm(self, action: str, serverid: int, imageid: int = 0):
@@ -115,7 +123,26 @@ class KeyboardsCreater:
             callback_data=ServerAction(action=Actions.INFO, server_id=serverid).pack(),
         )
 
-        builder.adjust(2, 1)
+        builder.adjust(2)
+        return builder.as_markup()
+
+    def location_types(self, location_types: list[Datacenter]):
+        builder = InlineKeyboardBuilder()
+
+        for ser in location_types:
+            builder.button(
+                text=f"{ser.location.country}, {ser.location.city}",
+                callback_data=LocationTypeSelect(
+                    location=ser.id, is_select=True
+                ).pack(),
+            )
+
+        builder.button(
+            text=KeyboardText.CANCEL,
+            callback_data=ServerList(action=Actions.HOME).pack(),
+        )
+
+        builder.adjust(1)
         return builder.as_markup()
 
     def server_types(self, server_types: list[ServerType]):
@@ -132,5 +159,37 @@ class KeyboardsCreater:
             callback_data=ServerList(action=Actions.HOME).pack(),
         )
 
-        builder.adjust(2, 1)
+        builder.adjust(1)
+        return builder.as_markup()
+
+    def image_types(self, images: list[Image]):
+        builder = InlineKeyboardBuilder()
+
+        latest_images: dict[str, Image] = {}
+        for image in images:
+            if not image.name:
+                continue
+            if (
+                image.name not in latest_images
+                or image.created > latest_images[image.name].created
+            ):
+                latest_images[image.name] = image
+
+        image_list: list[Image] = sorted(latest_images.values(), key=lambda x: x.name)
+
+        for image in image_list:
+            builder.button(
+                text=image.name,
+                callback_data=ImageTypeSelect(
+                    image=image.id,
+                    is_select=True
+                ).pack(),
+            )
+
+        builder.button(
+            text=KeyboardText.CANCEL,
+            callback_data=ServerList(action=Actions.HOME).pack(),
+        )
+
+        builder.adjust(2)
         return builder.as_markup()

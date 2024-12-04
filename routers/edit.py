@@ -32,14 +32,15 @@ async def confirm_server_action(callback: CallbackQuery, callback_data: ServerAc
         and callback_data.action == Actions.REBUILD
         and callback_data.image_id == 0
     ):
-        images = await HetznerAPI.get_images(callback.from_user.id)
+        server = await HetznerAPI.get_server(callback_data.server_id)
+        images = await HetznerAPI.get_images(server.server_type.architecture)
         if not images:
             return await callback.answer(MessageText.CHECK_LOGS)
 
         await callback.message.edit_text(
             text=MessageText.IMAGE_LIST,
             reply_markup=Keyboards.rebuild(
-                images=images, server_id=callback_data.server_id
+                images=images, serverid=callback_data.server_id
             ),
         )
         return
@@ -51,7 +52,7 @@ async def confirm_server_action(callback: CallbackQuery, callback_data: ServerAc
             reply_markup=Keyboards.confirm(
                 callback_data.action,
                 callback_data.server_id,
-                image_id=callback_data.image_id,
+                imageid=callback_data.image_id,
             ),
         )
         return
@@ -90,14 +91,14 @@ async def execute_server_action(
         if not callback_data.image_id:
             return "Image ID not found"
         result = await HetznerAPI.rebuild_server(
-            server, callback_data.image_id, callback.from_user.id
+            server, callback_data.image_id
         )
         if not result:
             return MessageText.CHECK_LOGS
         return "Rebuilding server initiated"
 
     action_method = getattr(HetznerAPI, callback_data.action)
-    result = await action_method(server, callback.from_user.id)
+    result = await action_method(server)
 
     if not result:
         return MessageText.CHECK_LOGS
@@ -115,7 +116,7 @@ async def execute_server_action(
 
 async def update_server_list_ui(callback: CallbackQuery):
     """Helper function to update the server list after an action like delete."""
-    servers = await HetznerAPI.get_servers(callback.from_user.id)
+    servers = await HetznerAPI.get_servers()
     if not servers:
         await callback.answer(MessageText.CHECK_LOGS)
     else:

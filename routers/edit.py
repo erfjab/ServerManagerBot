@@ -90,9 +90,7 @@ async def execute_server_action(
     if callback_data.action == Actions.REBUILD:
         if not callback_data.image_id:
             return "Image ID not found"
-        result = await HetznerAPI.rebuild_server(
-            server, callback_data.image_id
-        )
+        result = await HetznerAPI.rebuild_server(server, callback_data.image_id)
         if not result:
             return MessageText.CHECK_LOGS
         return "Rebuilding server initiated"

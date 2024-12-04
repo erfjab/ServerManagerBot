@@ -6,7 +6,13 @@ from hcloud.images.domain import Image
 from hcloud.server_types.domain import ServerType
 from hcloud.datacenters.domain import Datacenter
 
-from .callback import ServerAction, ServerList, ServerTypeSelect, LocationTypeSelect, ImageTypeSelect
+from .callback import (
+    ServerAction,
+    ServerList,
+    ServerTypeSelect,
+    LocationTypeSelect,
+    ImageTypeSelect,
+)
 from .action import Actions
 from language import KeyboardText
 
@@ -180,10 +186,7 @@ class KeyboardsCreater:
         for image in image_list:
             builder.button(
                 text=image.name,
-                callback_data=ImageTypeSelect(
-                    image=image.id,
-                    is_select=True
-                ).pack(),
+                callback_data=ImageTypeSelect(image=image.id, is_select=True).pack(),
             )
 
         builder.button(

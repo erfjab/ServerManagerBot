@@ -1,16 +1,15 @@
 from aiogram import Router
+from . import base, data, edit, create
 
-from . import server
+__all__ = ["setup_routers", "base", "data", "edit", "create"]
+
 
 def setup_routers() -> Router:
-
-    from . import (
-        base
-    )
-
     router = Router()
 
     router.include_router(base.router)
-    router.include_router(server.router)
+    router.include_router(data.router)
+    router.include_router(edit.router)
+    router.include_router(create.router)
 
     return router

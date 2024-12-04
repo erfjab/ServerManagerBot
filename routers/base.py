@@ -1,21 +1,35 @@
-from aiogram import Router
+from aiogram import Router, F, exceptions
 from aiogram.filters import CommandStart
-from aiogram.types import Message
-from utils.lang import MessageText
-from utils.keys import server_list_keyboard
-from utils.hetzner import HetznerManager
+from aiogram.types import Message, CallbackQuery
 
-router = Router()
+from language import MessageText
+from keys import Keyboards, ServerList, Actions
+from api import HetznerAPI
 
-@router.message(CommandStart())
-async def cmd_start(message: Message):
-    servers = await HetznerManager.get_servers(message.from_user.id)
-    
+router = Router(name="start")
+
+
+@router.message(CommandStart(ignore_case=True))
+async def start(message: Message):
+    servers = await HetznerAPI.get_servers()
+
     if not servers:
-        await message.answer(MessageText.ServerNotFound)
+        await message.answer(MessageText.NOT_FOUND)
         return
 
-    await message.answer(
-        MessageText.Start,
-        reply_markup=server_list_keyboard(servers)
-    )
+    await message.answer(MessageText.START, reply_markup=Keyboards.menu(servers))
+
+
+@router.callback_query(ServerList.filter(F.action == Actions.HOME))
+async def update_server_list(callback: CallbackQuery):
+    servers = await HetznerAPI.get_servers()
+
+    if not servers:
+        return await callback.answer(MessageText.NOT_FOUND)
+
+    try:
+        await callback.message.edit_text(
+            MessageText.START, reply_markup=Keyboards.menu(servers)
+        )
+    except exceptions.TelegramAPIError:
+        await callback.answer(MessageText.IS_UPDATED)

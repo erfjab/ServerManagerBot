@@ -1,2 +1,0 @@
-aiogram==3.10.0
-hcloud==2.2.1

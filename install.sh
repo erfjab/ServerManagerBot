@@ -156,7 +156,6 @@ Type=simple
 User=root
 WorkingDirectory=$INSTALL_DIR/$SCRIPT_NAME
 ExecStartPre=uv sync
-ExecStartPre=uv run alembic upgrade head
 ExecStart=uv run main.py
 Restart=always
 RestartSec=3

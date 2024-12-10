@@ -74,6 +74,7 @@ check_system_dependencies() {
 
 # Check for missing pip dependencies and install them
 check_pip_dependencies() {
+    export PIP_BREAK_SYSTEM_PACKAGES=1
     for package in "${PIP_DEPENDENCIES[@]}"; do
         if ! python3 -c "import $package" &>/dev/null; then
             log "Installing missing pip dependency: $package"

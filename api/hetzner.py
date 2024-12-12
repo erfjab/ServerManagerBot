@@ -33,74 +33,102 @@ def handle_hetzner_errors(func):
 
 
 class HetznerManager:
-    def __init__(self, key: str) -> None:
-        self.client = Client(token=key)
-
+    @staticmethod
     @handle_hetzner_errors
-    async def get_servers(self) -> List[Server]:
-        return self.client.servers.get_all()
+    async def get_servers(key: str) -> List[Server]:
+        client = Client(token=key)
+        return client.servers.get_all()
 
+    @staticmethod
     @handle_hetzner_errors
-    async def get_server(self, server_id: int) -> Optional[Server]:
-        return self.client.servers.get_by_id(server_id)
+    async def get_server(key: str, server_id: int) -> Optional[Server]:
+        client = Client(token=key)
+        return client.servers.get_by_id(server_id)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def get_server_type(self, server_id: int) -> Optional[ServerType]:
-        return self.client.server_types.get_by_id(server_id)
+    async def get_server_type(key: str, server_id: int) -> Optional[ServerType]:
+        client = Client(token=key)
+        return client.server_types.get_by_id(server_id)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def power_on(self, server: Server) -> Optional[Action]:
-        return self.client.servers.power_on(server)
+    async def power_on(key: str, server: Server) -> Optional[Action]:
+        client = Client(token=key)
+        return client.servers.power_on(server)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def power_off(self, server: Server) -> Optional[Action]:
-        return self.client.servers.power_off(server)
+    async def power_off(key: str, server: Server) -> Optional[Action]:
+        client = Client(token=key)
+        return client.servers.power_off(server)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def reboot(self, server: Server) -> Optional[Action]:
-        return self.client.servers.reboot(server)
+    async def reboot(key: str, server: Server) -> Optional[Action]:
+        client = Client(token=key)
+        return client.servers.reboot(server)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def reset_password(self, server: Server) -> Optional[str]:
-        return self.client.servers.reset_password(server).root_password
+    async def reset_password(key: str, server: Server) -> Optional[str]:
+        client = Client(token=key)
+        return client.servers.reset_password(server).root_password
 
+    @staticmethod
     @handle_hetzner_errors
-    async def delete(self, server: Server) -> Optional[Action]:
-        return self.client.servers.delete(server)
+    async def delete(key: str, server: Server) -> Optional[Action]:
+        client = Client(token=key)
+        return client.servers.delete(server)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def reset(self, server: Server) -> Optional[Action]:
-        return self.client.servers.reset(server)
+    async def reset(key: str, server: Server) -> Optional[Action]:
+        client = Client(token=key)
+        return client.servers.reset(server)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def get_images(self, arch: str = None) -> List[Image]:
-        return self.client.images.get_all(architecture=arch)
+    async def get_images(key: str, arch: str = None) -> List[Image]:
+        client = Client(token=key)
+        return client.images.get_all(architecture=arch)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def rebuild_server(self, server: Server, image_id: int) -> Optional[Action]:
-        image = self.client.images.get_by_id(image_id)
-        return self.client.servers.rebuild(server, image)
+    async def rebuild_server(
+        key: str, server: Server, image_id: int
+    ) -> Optional[Action]:
+        client = Client(token=key)
+        image = client.images.get_by_id(image_id)
+        return client.servers.rebuild(server, image)
 
+    @staticmethod
     @handle_hetzner_errors
     async def create_server(
-        self, name: str, server_type: ServerType, image: Image
+        key: str, name: str, server_type: ServerType, image: Image
     ) -> Optional[Server]:
-        server = self.client.servers.create(
-            name=name, server_type=server_type, image=image
-        )
+        client = Client(token=key)
+        server = client.servers.create(name=name, server_type=server_type, image=image)
         return server.server
 
-    async def get_image(self, id: int) -> Optional[Image]:
-        return self.client.images.get_by_id(id)
+    async def get_image(key: str, id: int) -> Optional[Image]:
+        client = Client(token=key)
+        return client.images.get_by_id(id)
 
+    @staticmethod
     @handle_hetzner_errors
-    async def get_server_types(self) -> List[ServerType]:
-        return self.client.server_types.get_all()
+    async def get_server_types(key: str) -> List[ServerType]:
+        client = Client(token=key)
+        return client.server_types.get_all()
 
+    @staticmethod
     @handle_hetzner_errors
-    async def get_datacenters(self) -> List[Datacenter]:
-        return self.client.datacenters.get_all()
+    async def get_datacenters(key: str) -> List[Datacenter]:
+        client = Client(token=key)
+        return client.datacenters.get_all()
 
+    @staticmethod
     @handle_hetzner_errors
-    async def get_datacenter(self, id: int) -> Optional[Datacenter]:
-        return self.client.datacenters.get_by_id(id)
+    async def get_datacenter(key: str, id: int) -> Optional[Datacenter]:
+        client = Client(token=key)
+        return client.datacenters.get_by_id(id)

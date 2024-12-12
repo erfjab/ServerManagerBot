@@ -1,21 +1,15 @@
-from .action import Actions
-from .callback import (
-    ServerAction,
-    ServerList,
-    ServerTypeSelect,
-    LocationTypeSelect,
-    ImageTypeSelect,
-)
+from .enums import Actions, Pages, ServerCreate, ServerUpdate
+from .callback import PageCB, SelectCB
 from .keyboard import KeyboardsCreater
 
 Keyboards = KeyboardsCreater()
 
 __all__ = [
     "Actions",
-    "ServerAction",
-    "ServerList",
+    "PageCB",
+    "SelectCB",
+    "Pages",
     "Keyboards",
-    "ServerTypeSelect",
-    "LocationTypeSelect",
-    "ImageTypeSelect",
+    "ServerCreate",
+    "ServerUpdate",
 ]

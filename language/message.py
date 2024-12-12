@@ -9,6 +9,7 @@ class MessageTextsFile(BaseSettings):
     )
 
     START: str = "👋 Welcome to ServerManagerBot\nDevelop and Design by @ErfJabs"
+    MENU: str = "🗃️ Your Account Menu:"
     SERVER_LIST: str = "🖥️ Here are your servers:"
     IS_UPDATED: str = "✅ is updated!"
     SERVER_INFO: str = (
@@ -24,7 +25,7 @@ class MessageTextsFile(BaseSettings):
         "<b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]\n"
         "<b>🔑 Password:</b> <code>{password}</code>"
     )
-    NOT_FOUND: str = "❗ not found!"
+    NOT_FOUND: str = "❗ Not Found! (check logs)"
     TRY_AGAIN: str = "⚠️ Oops! An error occurred, please try again..."
     CHECK_LOGS: str = "⚠️ Oops! An error occurred, please check the logs."
     CONFIRM_ACTION: str = "Are you sure you want to <b>{action}</b> this server?"

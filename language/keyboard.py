@@ -8,7 +8,7 @@ class KeyboardTextsFile(BaseSettings):
         env_file=".env", extra="ignore"
     )
 
-    UPDATE: str = "🔄 Update Servers"
+    UPDATE: str = "🔄 Update"
     POWER_ON: str = "🟢 Power On"
     POWER_OFF: str = "🔴 Power Off"
     REBOOT: str = "🔄 Reboot"
@@ -22,3 +22,5 @@ class KeyboardTextsFile(BaseSettings):
     RESET: str = "🔄 Reset"
     HETZNER: str = "🟥 Hetzner"
     CREATE: str = "➕ Create"
+    SERVERS: str = "☁️ Servers"
+    HOMES: str = "🏛️ Home"

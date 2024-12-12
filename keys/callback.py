@@ -1,27 +1,19 @@
 from aiogram.filters.callback_data import CallbackData
+from .enums import Pages, Actions, ServerCreate, ServerUpdate
 
 
-class ServerAction(CallbackData, prefix="server_action"):
-    action: str
-    server_id: int
+class PageCB(CallbackData, prefix="pages"):
+    key: str = "KEY"
+    page: Pages | None = None
+    action: Actions | ServerUpdate | None = None
+    server_id: int | None = None
+    image_id: int | None = None
     confirm: bool = False
-    image_id: int = 0
 
 
-class ServerList(CallbackData, prefix="server_list"):
-    action: str
-
-
-class ServerTypeSelect(CallbackData, prefix="server_type"):
-    server: int = 0
-    is_select: bool = False
-
-
-class LocationTypeSelect(CallbackData, prefix="location_type"):
-    location: int = 0
-    is_select: bool = False
-
-
-class ImageTypeSelect(CallbackData, prefix="image_type"):
-    image: int = 0
-    is_select: bool = False
+class SelectCB(CallbackData, prefix="select"):
+    key: str = "KEY"
+    page: Pages | None = None
+    action: Actions | None = None
+    datatype: ServerCreate | None = None
+    datavalue: str | int | None = None

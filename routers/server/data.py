@@ -1,25 +1,29 @@
 from datetime import datetime, timezone
-
 from aiogram import Router, F, exceptions
 from aiogram.types import CallbackQuery
-from keys import ServerAction, Keyboards, Actions
-from api import HetznerAPI
+
+from api import HetznerManager
+from keys import PageCB, Pages, Actions, Keyboards, ServerUpdate
 from language import MessageText
 
-router = Router(name="data")
+router = Router(name="server_menu")
 
 
 @router.callback_query(
-    ServerAction.filter(F.action.in_({Actions.INFO, Actions.UPDATE}))
+    PageCB.filter(
+        (F.page.is_(Pages.SERVER)) & (F.action.in_([Actions.INFO, ServerUpdate.UPDATE]))
+    )
 )
 async def server_data(
-    callback: CallbackQuery, callback_data: ServerAction, server_password: str = None
+    callback: CallbackQuery,
+    callback_data: PageCB,
+    key: str | None,
+    server_password: str | None = None,
 ):
-    server = await HetznerAPI.get_server(callback_data.server_id)
-
+    server = await HetznerManager.get_server(key, callback_data.server_id)
     try:
         emoji = {"starting": "🟡", "stopping": "🔴", "running": "🟢", "off": "🔴"}
-        status_emoji = emoji.get(server.status, "⚪")
+        status_emoji = emoji.get(server.status, "⚪") if server.status else "⚪"
         await callback.message.edit_text(
             text=MessageText.SERVER_INFO.format(
                 name=server.name,
@@ -42,7 +46,7 @@ async def server_data(
                     3,
                 ),
             ),
-            reply_markup=Keyboards.edit_menu(server.id),
+            reply_markup=Keyboards.edit_server(key, callback_data.server_id),
         )
     except exceptions.TelegramAPIError:
         await callback.answer(MessageText.IS_UPDATED)

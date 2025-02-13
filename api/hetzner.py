@@ -105,12 +105,20 @@ class HetznerManager:
     @staticmethod
     @handle_hetzner_errors
     async def create_server(
-        key: str, name: str, server_type: ServerType, image: Image
+        key: str,
+        name: str,
+        server_type: ServerType,
+        image: Image,
+        datacenter: Datacenter,
     ) -> Optional[Server]:
         client = Client(token=key)
-        server = client.servers.create(name=name, server_type=server_type, image=image)
+        server = client.servers.create(
+            name=name, server_type=server_type, image=image, datacenter=datacenter
+        )
         return server.server
 
+    @staticmethod
+    @handle_hetzner_errors
     async def get_image(key: str, id: int) -> Optional[Image]:
         client = Client(token=key)
         return client.images.get_by_id(id)

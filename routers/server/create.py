@@ -36,14 +36,13 @@ async def show_location_types(callback: CallbackQuery, key: str | None):
 async def show_server_types(
     callback: CallbackQuery, state: FSMContext, callback_data: SelectCB, key: str | None
 ):
-    await state.update_data(location=callback_data.datavalue)
-
     location_server_types = await HetznerManager.get_datacenter(
         key, callback_data.datavalue
     )
 
     if not location_server_types:
         return await callback.answer(MessageText.NOT_FOUND)
+    await state.update_data(location=location_server_types.id)
 
     return await callback.message.edit_text(
         text=MessageText.SELECT_SERVER_TYPE,
@@ -90,12 +89,12 @@ async def select_image_type(
     callback: CallbackQuery, state: FSMContext, callback_data: SelectCB, key: str | None
 ):
     data = await state.get_data()
-
     server_create = await HetznerManager.create_server(
         key=key,
         name=secrets.token_hex(2),
         server_type=await HetznerManager.get_server_type(key, int(data["server"])),
         image=await HetznerManager.get_image(key, int(callback_data.datavalue)),
+        datacenter=await HetznerManager.get_datacenter(key, int(data["location"])),
     )
 
     if not server_create:

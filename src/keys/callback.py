@@ -4,6 +4,10 @@ from eiogram.utils.callback_data import CallbackData
 
 class AreaType(StrEnum):
     HOME = "hm"
+    CLIENT = "cl"
+    SNAPSHOT = "ss"
+    PRIMARY_IP = "pi"
+    SERVER = "sv"
 
 
 class TaskType(StrEnum):
@@ -14,7 +18,10 @@ class TaskType(StrEnum):
     UPDATE = "pt"
 
 
-class StepType(StrEnum): ...
+class StepType(StrEnum):
+    CHANGE_REMARK = "cr"
+    CHANGE_SECRET = "cs"
+    REMOVE_CLIENT = "rmc"
 
 
 class BotCB(CallbackData, prefix="x"):

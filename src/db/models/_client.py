@@ -19,13 +19,15 @@ class Client(Base):
     secret: Mapped[str] = mapped_column(String(256), index=True, nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @property
+    def kb_remark(self) -> str:
+        return f"{self.remark} [{self.id}]"
 
     @classmethod
     async def get_by_id(cls, db: AsyncSession, id: int) -> Optional["Client"]:
-        result = await db.execute(select(cls).where(cls.id == id))
+        result = await db.execute(select(cls).where(cls.id == int(id)))
         return result.scalars().first()
 
     @classmethod

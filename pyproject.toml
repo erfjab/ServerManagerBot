@@ -1,3 +1,6 @@
+[tool.ruff]
+line-length = 128
+
 [project]
 name = "threebot"
 version = "0.1.0"
@@ -9,7 +12,7 @@ dependencies = [
     "asyncpg>=0.30.0",
     "dotenv>=0.9.9",
     "eiogram>=1.7.2",
-    "fastapi>=0.116.1",
+    "fastapi==0.115.13",
     "python-decouple>=3.8",
     "sqlalchemy[asyncio]>=2.0.42",
     "uvicorn>=0.35.0",

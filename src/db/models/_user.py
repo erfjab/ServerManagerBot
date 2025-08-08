@@ -31,9 +31,7 @@ class UserMessage(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     chat_id: Mapped[int] = mapped_column(BigInteger, index=True, nullable=False)
     message_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(), default=datetime.now(), nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now(), nullable=False)
 
     @classmethod
     async def _get_chat_id(cls, update: Union[Message, CallbackQuery]) -> int:
@@ -47,9 +45,7 @@ class UserMessage(Base):
             db.add(UserMessage(chat_id=message.chat.id, message_id=message.message_id))
 
     @classmethod
-    async def clear(
-        cls, update: Union[Message, CallbackQuery], *, keep_current: bool = False
-    ) -> None:
+    async def clear(cls, update: Union[Message, CallbackQuery], *, keep_current: bool = False) -> None:
         async with GetDB() as db:
             chat_id = await cls._get_chat_id(update)
             message_id = getattr(
@@ -60,9 +56,7 @@ class UserMessage(Base):
             delete_condition = UserMessage.chat_id == chat_id
             if keep_current and message_id:
                 delete_condition &= UserMessage.message_id != message_id
-            messages = await db.execute(
-                select(UserMessage.message_id).where(delete_condition)
-            )
+            messages = await db.execute(select(UserMessage.message_id).where(delete_condition))
             message_ids = [msg[0] for msg in messages.all()]
             if message_ids:
                 try:

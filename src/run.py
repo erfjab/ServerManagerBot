@@ -1,68 +1,72 @@
 import logging
+from copy import deepcopy
 
 from uvicorn import Config, Server
+from uvicorn.config import LOGGING_CONFIG
 from eiogram.types import BotCommand
 
-from src.api import API
-from src.handlers import setup_handlers
-from src.utils.state import DatabaseStorage
 from src.config import (
-    BOT,
-    DP,
     UVICORN_SSL_CERTFILE,
     UVICORN_SSL_KEYFILE,
     UVICORN_HOST,
     UVICORN_PORT,
+    BOT,
+    DP,
     TELEGRAM_WEBHOOK_HOST,
     TELEGRAM_WEBHOOK_SECRET_KEY,
 )
+from src.api import API
+from src.handlers import setup_handlers
+from src.utils.state import DatabaseStorage
 
 logger = logging.getLogger(__name__)
 
 
+def get_log_config():
+    log_config = deepcopy(LOGGING_CONFIG)
+    default_fmt = "[%(asctime)s] %(levelprefix)s %(message)s"
+    date_fmt = "%m/%d %H:%M:%S"
+    log_config["formatters"]["default"]["fmt"] = default_fmt
+    log_config["formatters"]["default"]["datefmt"] = date_fmt
+    log_config["formatters"]["access"]["fmt"] = default_fmt
+    log_config["formatters"]["access"]["datefmt"] = date_fmt
+    return log_config
+
+
 async def main():
+    logger.info("Starting bot server...")
     cfg = Config(
         app=API,
         host=UVICORN_HOST,
         port=UVICORN_PORT,
         workers=1,
+        log_config=get_log_config(),
     )
-
+    logger.info("Configuring SSL if provided...")
     if UVICORN_SSL_CERTFILE and UVICORN_SSL_KEYFILE:
         cfg.ssl_certfile = UVICORN_SSL_CERTFILE
         cfg.ssl_keyfile = UVICORN_SSL_KEYFILE
-        logger.info("SSL configuration loaded successfully")
-
+    logger.info("Initializing bot...")
+    await startup_event()
+    logger.info("Starting server...")
     server = Server(cfg)
-    logger.info(f"Starting server on {UVICORN_HOST}:{UVICORN_PORT}")
+    logger.info("Server is running...")
     await server.serve()
 
 
-@API.on_event("startup")
 async def startup_event():
-    try:
-        webhook_url = f"{TELEGRAM_WEBHOOK_HOST}/api/telegram/webhook"
-        await BOT.set_webhook(
-            url=webhook_url,
-            secret_token=TELEGRAM_WEBHOOK_SECRET_KEY,
-        )
-        logger.info(f"Webhook successfully set up at {webhook_url}")
-        DP.storage = DatabaseStorage()
-        DP.include_router(setup_handlers())
-        logger.info("All handlers initialized successfully")
-
-        await BOT.set_my_commands(
-            commands=[
-                BotCommand(command="/start", description="Start or restart the bot"),
-            ]
-        )
-        logger.info("Bot commands set up successfully")
-
-        bot_data = await BOT.get_me()
-        logger.info(
-            f"Bot @{bot_data.username} is now running and ready to receive updates"
-        )
-
-    except Exception as e:
-        logger.error(f"Startup failed: {str(e)}")
-        raise
+    await BOT.set_webhook(
+        url=f"{TELEGRAM_WEBHOOK_HOST}/api/telegram/webhook",
+        secret_token=TELEGRAM_WEBHOOK_SECRET_KEY,
+        allowed_updates=[
+            "message",
+            "callback_query",
+        ],
+    )
+    DP.storage = DatabaseStorage()
+    DP.include_router(setup_handlers())
+    await BOT.set_my_commands(
+        commands=[
+            BotCommand(command="/start", description="Start/Restart the bot"),
+        ]
+    )

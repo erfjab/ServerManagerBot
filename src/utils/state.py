@@ -15,9 +15,7 @@ class DatabaseStorage(BaseStorage):
             await db.flush()
         return user
 
-    async def get_state(
-        self, key: Union[int, str], db: Optional[AsyncSession] = None
-    ) -> Optional[Dict[str, Any]]:
+    async def get_state(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> Optional[Dict[str, Any]]:
         if db:
             user = await self._get_or_create(key, db)
             return user.state
@@ -25,9 +23,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.get_state(key, db)
 
-    async def get_context(
-        self, key: Union[int, str], db: Optional[AsyncSession] = None
-    ) -> Optional[Dict[str, Any]]:
+    async def get_context(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> Optional[Dict[str, Any]]:
         if db:
             user = await self._get_or_create(key, db)
             return {"state": user.state, "data": user.data}
@@ -67,9 +63,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.set_state(key, state, db)
 
-    async def upsert_data(
-        self, key: Union[int, str], db: Optional[AsyncSession] = None, **data: Any
-    ) -> None:
+    async def upsert_data(self, key: Union[int, str], db: Optional[AsyncSession] = None, **data: Any) -> None:
         if db:
             user = await self._get_or_create(key, db)
             current_data = user.data or {}
@@ -80,9 +74,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.upsert_data(key, db, **data)
 
-    async def get_data(
-        self, key: Union[int, str], db: Optional[AsyncSession] = None
-    ) -> Dict[str, Any]:
+    async def get_data(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> Dict[str, Any]:
         if db:
             user = await self._get_or_create(key, db)
             return user.data
@@ -90,9 +82,7 @@ class DatabaseStorage(BaseStorage):
         async with GetDB() as db:
             return await self.get_data(key, db)
 
-    async def clear_state(
-        self, key: Union[int, str], db: Optional[AsyncSession] = None
-    ) -> None:
+    async def clear_state(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> None:
         if db:
             user = await self._get_or_create(key, db)
             user.state = None
@@ -101,9 +91,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.clear_state(key, db)
 
-    async def clear_data(
-        self, key: Union[int, str], db: Optional[AsyncSession] = None
-    ) -> None:
+    async def clear_data(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> None:
         if db:
             user = await self._get_or_create(key, db)
             user.data = {}
@@ -112,9 +100,7 @@ class DatabaseStorage(BaseStorage):
             async with GetDB() as db:
                 await self.clear_data(key, db)
 
-    async def clear_all(
-        self, key: Union[int, str], db: Optional[AsyncSession] = None
-    ) -> None:
+    async def clear_all(self, key: Union[int, str], db: Optional[AsyncSession] = None) -> None:
         if db:
             user = await self._get_or_create(key, db)
             user.data = {}

@@ -1,4 +1,5 @@
-from ._setting import Setting
 from ._user import User, UserMessage, UserState
+from ._client import Client
 
-__all__ = ["Setting", "User", "UserMessage", "UserState"]
+
+__all__ = ["Client", "User", "UserMessage", "UserState"]

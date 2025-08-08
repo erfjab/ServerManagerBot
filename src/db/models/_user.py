@@ -29,9 +29,11 @@ class UserMessage(Base):
     __tablename__ = "user_messages"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    chat_id: Mapped[int] = mapped_column(BigInteger, index=True)
+    chat_id: Mapped[int] = mapped_column(BigInteger, index=True, nullable=False)
     message_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(), default=datetime.now(), nullable=False
+    )
 
     @classmethod
     async def _get_chat_id(cls, update: Union[Message, CallbackQuery]) -> int:

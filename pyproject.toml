@@ -1,11 +1,16 @@
 [project]
-name = "servermanagerbot-1"
+name = "threebot"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "aiogram>=3.15.0",
-    "hcloud>=2.3.0",
-    "pydantic-settings>=2.6.1",
+    "alembic>=1.16.4",
+    "asyncpg>=0.30.0",
+    "dotenv>=0.9.9",
+    "eiogram>=1.7.2",
+    "fastapi>=0.116.1",
+    "python-decouple>=3.8",
+    "sqlalchemy[asyncio]>=2.0.42",
+    "uvicorn>=0.35.0",
 ]

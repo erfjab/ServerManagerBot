@@ -47,14 +47,6 @@ async def main():
         cfg.ssl_certfile = UVICORN_SSL_CERTFILE
         cfg.ssl_keyfile = UVICORN_SSL_KEYFILE
     logger.info("Initializing bot...")
-    await startup_event()
-    logger.info("Starting server...")
-    server = Server(cfg)
-    logger.info("Server is running...")
-    await server.serve()
-
-
-async def startup_event():
     await BOT.set_webhook(
         url=f"{TELEGRAM_WEBHOOK_HOST}/api/telegram/webhook",
         secret_token=TELEGRAM_WEBHOOK_SECRET_KEY,
@@ -70,3 +62,7 @@ async def startup_event():
             BotCommand(command="/start", description="Start/Restart the bot"),
         ]
     )
+    logger.info("Starting server...")
+    server = Server(cfg)
+    logger.info("Server is running...")
+    await server.serve()

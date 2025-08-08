@@ -18,3 +18,4 @@ class Dialogs(StrEnum):
     CLIENTS_ENTER_SECRET = "Enter client secret [api key]:"
     CLIENTS_NOT_FOUND = "<b>❌ Client not found.</b>"
     CLIENTS_CREATION_SUCCESS = "<b>✅ Client created successfully.</b>\nYou can now manage the client."
+    CLIENTS_INVALID_TOKEN = "<b>❌ Invalid client secret [api key].</b>\nPlease check the token and try again."

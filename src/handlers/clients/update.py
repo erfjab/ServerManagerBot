@@ -2,6 +2,7 @@ from eiogram import Router
 from eiogram.types import CallbackQuery, Message
 from eiogram.filters import Text, StateFilter
 from eiogram.state import StateManager, State, StateGroup
+from hcloud import Client as HCloudClient
 
 from src.db import AsyncSession, Client, UserMessage
 from src.keys import BotKB, BotCB, AreaType, TaskType, StepType
@@ -48,6 +49,12 @@ async def input_handler(message: Message, db: AsyncSession, state: StateManager,
         case StepType.CHANGE_REMARK:
             await Client.update(db, client.id, remark=message.text)
         case StepType.CHANGE_SECRET:
+            try:
+                hetzner = HCloudClient(token=message.text)
+                hetzner.datacenters.get_all()
+            except Exception:
+                update = await message.answer(text=Dialogs.CLIENTS_INVALID_TOKEN)
+                return await UserMessage.add(update)
             await Client.update(db, client.id, secret=message.text)
         case _:
             update = await message.answer(text="Invalid step!", reply_markup=BotKB.home_back())

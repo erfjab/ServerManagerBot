@@ -13,6 +13,7 @@ dependencies = [
     "dotenv>=0.9.9",
     "eiogram>=1.7.2",
     "fastapi==0.115.13",
+    "hcloud>=2.5.4",
     "python-decouple>=3.8",
     "sqlalchemy[asyncio]>=2.0.42",
     "uvicorn>=0.35.0",

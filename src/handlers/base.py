@@ -22,7 +22,8 @@ async def start_handler(message: Message, db: AsyncSession, state: StateManager)
 async def home_menu(callback_query: CallbackQuery, db: AsyncSession, state: StateManager):
     await state.clear_all(db=db)
     clients = await Client.get_all(db)
-    return await callback_query.message.edit(
+    update = await callback_query.message.edit(
         text=Dialogs.COMMAND_START,
         reply_markup=BotKB.home(clients=clients),
     )
+    return await UserMessage.clear(update, keep_current=True)

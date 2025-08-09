@@ -3,7 +3,7 @@ from enum import StrEnum
 
 class Dialogs(StrEnum):
     ### Commands
-    COMMAND_START = "<b>👋☄️ Hi Dear.</b>"
+    COMMAND_START = "<b>🌟 Welcome! I'm your Server Management Assistant</b>"
 
     ### Actions
     ACTIONS_SUCCESS = "<b>🎉✅ Action completed successfully.</b>"

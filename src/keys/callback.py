@@ -22,6 +22,13 @@ class StepType(StrEnum):
     CHANGE_REMARK = "cr"
     CHANGE_SECRET = "cs"
     REMOVE_CLIENT = "rmc"
+    SERVERS_REBOOT = "reb"
+    SERVERS_REBUILD = "rbl"
+    SERVERS_POWER_ON = "pwn"
+    SERVERS_POWER_OFF = "pwf"
+    SERVERS_RESET_PASSWORD = "rsp"
+    SERVERS_RESET = "rst"
+    SERVERS_REMOVE = "rms"
 
 
 class BotCB(CallbackData, prefix="x"):

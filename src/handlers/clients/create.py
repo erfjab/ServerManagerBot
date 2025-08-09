@@ -43,6 +43,6 @@ async def secret_handler(message: Message, db: AsyncSession, state: StateManager
         update = await message.answer(text=Dialogs.CLIENTS_INVALID_TOKEN)
         return await UserMessage.add(update)
     client = await Client.create(db, remark=state_data.get("remark", token_hex(3)), secret=message.text)
-    await state.clear_all(db=db)
+    await state.clear_state(db=db)
     update = await message.answer(text=Dialogs.CLIENTS_CREATION_SUCCESS, reply_markup=BotKB.clients_back(id=client.id))
     return await UserMessage.clear(update)

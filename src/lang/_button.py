@@ -3,7 +3,6 @@ from enum import StrEnum
 
 class Buttons(StrEnum):
     OWNER = "Owner"
-    SERVERS = "Servers"
     PRIMARY_IPS = "Primary IPs"
     SNAPSHOTS = "SnapShots"
     CLIENTS_ADD = "Add Client"
@@ -14,3 +13,14 @@ class Buttons(StrEnum):
     CREATE_CREATE = "Create Client"
     YES = "Yes"
     NO = "No"
+
+    ### Servers
+    SERVERS = "Servers"
+    SERVERS_REBOOT = "Reboot"
+    SERVERS_REBUILD = "Rebuild"
+    SERVERS_POWER_ON = "Power On"
+    SERVERS_POWER_OFF = "Power Off"
+    SERVERS_RESET_PASSWORD = "Reset Password"
+    SERVERS_RESET = "Reset"
+    SERVERS_REMOVE = "Remove Server"
+    SERVERS_CREATE = "Create Server"

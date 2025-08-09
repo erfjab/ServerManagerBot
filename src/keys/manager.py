@@ -1,6 +1,10 @@
 from typing import List
 from eiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from eiogram.utils.inline_builder import InlineKeyboardBuilder
+from hcloud.servers import Server
+from hcloud.images import Image
+from hcloud.datacenters import Datacenter
+from hcloud.server_types import ServerType
 
 from src.db import Client
 from src.lang import Buttons
@@ -46,15 +50,15 @@ class BotKB:
 
         kb.add(
             text=Buttons.SERVERS,
-            callback_data=BotCB(area=AreaType.SERVER, task=TaskType.LIST, target=id).pack(),
+            callback_data=BotCB(area=AreaType.SERVER, task=TaskType.MENU, target=id).pack(),
         )
         kb.add(
             text=Buttons.SNAPSHOTS,
-            callback_data=BotCB(area=AreaType.SNAPSHOT, task=TaskType.LIST, target=id).pack(),
+            callback_data=BotCB(area=AreaType.SNAPSHOT, task=TaskType.MENU, target=id).pack(),
         )
         kb.add(
             text=Buttons.PRIMARY_IPS,
-            callback_data=BotCB(area=AreaType.PRIMARY_IP, task=TaskType.LIST, target=id).pack(),
+            callback_data=BotCB(area=AreaType.PRIMARY_IP, task=TaskType.MENU, target=id).pack(),
         )
         kb.add(
             text=Buttons.CLIENTS_CHANGE_REMARK,
@@ -120,4 +124,103 @@ class BotKB:
             callback_data=BotCB(area=area, task=task, is_approve=False).pack(),
         )
         cls._back(kb=kb, area=area)
+        return kb.as_markup()
+
+    @classmethod
+    def servers_menu(cls, servers: List[Server]) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        emoji = {"starting": "🟡", "stopping": "🔴", "running": "🟢", "off": "🔴"}
+        for server in servers:
+            kb.add(
+                text=f"{emoji.get(server.status, '⚪️')} {server.name} [{server.status}]",
+                callback_data=BotCB(area=AreaType.SERVER, task=TaskType.INFO, target=server.id).pack(),
+            )
+        kb.adjust(2)
+        kb.row(
+            InlineKeyboardButton(
+                text=Buttons.SERVERS_CREATE,
+                callback_data=BotCB(area=AreaType.SERVER, task=TaskType.CREATE).pack(),
+            ),
+        )
+        cls._back(kb=kb, area=AreaType.CLIENT)
+        return kb.as_markup()
+
+    @classmethod
+    def servers_update(cls, server: Server) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        update = {
+            StepType.SERVERS_POWER_OFF: Buttons.SERVERS_POWER_OFF,
+            StepType.SERVERS_POWER_ON: Buttons.SERVERS_POWER_ON,
+            StepType.SERVERS_REBOOT: Buttons.SERVERS_REBOOT,
+            StepType.SERVERS_REBUILD: Buttons.SERVERS_REBUILD,
+            StepType.SERVERS_RESET_PASSWORD: Buttons.SERVERS_RESET_PASSWORD,
+            StepType.SERVERS_RESET: Buttons.SERVERS_RESET,
+            StepType.SERVERS_REMOVE: Buttons.SERVERS_REMOVE,
+        }
+        for step, button in update.items():
+            kb.add(
+                text=button,
+                callback_data=BotCB(
+                    area=AreaType.SERVER,
+                    task=TaskType.UPDATE,
+                    target=server.id,
+                    step=step,
+                ).pack(),
+            )
+        kb.adjust(2, 2, 2, 1)
+        cls._back(kb=kb, area=AreaType.SERVER)
+        return kb.as_markup()
+
+    @classmethod
+    def servers_back(cls, id: int) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        cls._back(kb=kb, area=AreaType.SERVER, target=id)
+        return kb.as_markup()
+
+    @classmethod
+    def images_select(cls, images: List[Image], task: TaskType, target: int = 0) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for image in images:
+            kb.add(
+                text=image.name,
+                callback_data=BotCB(
+                    area=AreaType.SERVER,
+                    task=task,
+                    target=image.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.SERVER, target=target)
+        return kb.as_markup()
+
+    @classmethod
+    def datacenters_select(cls, datacenters: List[Datacenter]) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for datacenter in datacenters:
+            kb.add(
+                text=f"{datacenter.location.city} [{datacenter.location.country}]",
+                callback_data=BotCB(
+                    area=AreaType.SERVER,
+                    task=TaskType.CREATE,
+                    target=datacenter.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.SERVER)
+        return kb.as_markup()
+
+    @classmethod
+    def plans_select(cls, plans: List[ServerType]) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for plan in plans:
+            kb.add(
+                text=f"{plan.name} [{plan.memory} RAM, {plan.cores} CPU, {plan.disk} Disk]",
+                callback_data=BotCB(
+                    area=AreaType.SERVER,
+                    task=TaskType.CREATE,
+                    target=plan.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.SERVER)
         return kb.as_markup()

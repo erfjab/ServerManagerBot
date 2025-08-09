@@ -4,6 +4,7 @@ from .middlewares import Middleware
 from .clients import setup_clients_handlers
 from .servers import setup_servers_handlers
 from .snapshots import setup_snapshots_handlers
+from .primary_ips import setup_primary_ips_handlers
 
 
 def setup_handlers() -> Router:
@@ -13,6 +14,7 @@ def setup_handlers() -> Router:
     router.include_router(setup_clients_handlers())
     router.include_router(setup_servers_handlers())
     router.include_router(setup_snapshots_handlers())
+    router.include_router(setup_primary_ips_handlers())
     return router
 
 

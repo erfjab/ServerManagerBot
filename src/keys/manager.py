@@ -5,6 +5,7 @@ from hcloud.servers import Server
 from hcloud.images import Image
 from hcloud.datacenters import Datacenter
 from hcloud.server_types import ServerType
+from hcloud.primary_ips import PrimaryIP
 
 from src.db import Client
 from src.lang import Buttons
@@ -300,4 +301,96 @@ class BotKB:
             )
         kb.adjust(1)
         cls._back(kb=kb, area=AreaType.SNAPSHOT, target=target)
+        return kb.as_markup()
+
+    @classmethod
+    def primary_ips_menu(cls, primary_ips: List[PrimaryIP]) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for primary_ip in primary_ips:
+            kb.add(
+                text=f"{primary_ip.name} [{primary_ip.ip}]",
+                callback_data=BotCB(
+                    area=AreaType.PRIMARY_IP,
+                    task=TaskType.INFO,
+                    target=primary_ip.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        kb.row(
+            InlineKeyboardButton(
+                text=Buttons.PRIMARY_IPS_CREATE_IPV4,
+                callback_data=BotCB(area=AreaType.PRIMARY_IP, task=TaskType.CREATE, target="ipv4").pack(),
+            ),
+            InlineKeyboardButton(
+                text=Buttons.PRIMARY_IPS_CREATE_IPV6,
+                callback_data=BotCB(area=AreaType.PRIMARY_IP, task=TaskType.CREATE, target="ipv6").pack(),
+            ),
+            size=2,
+        )
+        cls._back(kb=kb)
+        return kb.as_markup()
+
+    @classmethod
+    def primary_ips_update(cls, primary_ip: PrimaryIP) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        updates = {
+            Buttons.PRIMARY_IPS_REMARK: StepType.PRIMARY_IPS_REMARK,
+            Buttons.PRIMARY_IPS_UNASSIGN: StepType.PRIMARY_IPS_UNASSIGN,
+            Buttons.PRIMARY_IPS_ASSIGN: StepType.PRIMARY_IPS_ASSIGN,
+            Buttons.PRIMARY_IPS_DELETE: StepType.PRIMARY_IPS_DELETE,
+        }
+        for button, step in updates.items():
+            kb.add(
+                text=button,
+                callback_data=BotCB(
+                    area=AreaType.PRIMARY_IP,
+                    task=TaskType.UPDATE,
+                    step=step,
+                    target=primary_ip.id,
+                ).pack(),
+            )
+        kb.adjust(1, 2, 1)
+        cls._back(kb=kb, area=AreaType.PRIMARY_IP)
+        return kb.as_markup()
+
+    @classmethod
+    def primary_ips_back(cls, id: int = 0) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        cls._back(kb=kb, area=AreaType.PRIMARY_IP, target=id)
+        return kb.as_markup()
+
+    @classmethod
+    def primary_ips_select_server(
+        cls, servers: List[Server], task: TaskType = TaskType.UPDATE, target: int = 0
+    ) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for server in servers:
+            kb.add(
+                text=server.name,
+                callback_data=BotCB(
+                    area=AreaType.PRIMARY_IP,
+                    task=task,
+                    target=server.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.PRIMARY_IP, target=target)
+        return kb.as_markup()
+
+    @classmethod
+    def primary_ips_select_datacenter(
+        cls, datacenters: List[Datacenter], task: TaskType = TaskType.CREATE, target: int = 0
+    ) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for datacenter in datacenters:
+            kb.add(
+                text=f"{datacenter.location.city} [{datacenter.location.country}]",
+                callback_data=BotCB(
+                    area=AreaType.PRIMARY_IP,
+                    task=task,
+                    target=datacenter.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.PRIMARY_IP, target=target)
         return kb.as_markup()

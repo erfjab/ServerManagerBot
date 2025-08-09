@@ -34,6 +34,10 @@ class StepType(StrEnum):
     SNAPSHOTS_RESTORE = "srs"
     SNAPSHOTS_DELETE = "sds"
     SNAPSHOTS_REMARK = "srm"
+    PRIMARY_IPS_ASSIGN = "pia"
+    PRIMARY_IPS_UNASSIGN = "pua"
+    PRIMARY_IPS_REMARK = "pir"
+    PRIMARY_IPS_DELETE = "pid"
 
 
 class BotCB(CallbackData, prefix="x"):

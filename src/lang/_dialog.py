@@ -22,7 +22,7 @@ class Dialogs(StrEnum):
 
     ### Servers
     SERVERS_MENU = "<b>🖥️ Servers Menu</b>\n👇 Select an action from the menu below."
-    SERVERS_NOT_FOUND = "<b>🔍❌ Not found server.</b>"
+    SERVERS_NOT_FOUND = "🔍❌ Not found server."
     SERVERS_INFO = """
 <b>🚀 Name:</b> <code>{name}</code> [<code>{status}</code>]
 <b>🔗 IPV4:</b> <code>{ipv4}</code>
@@ -68,3 +68,24 @@ class Dialogs(StrEnum):
     SNAPSHOTS_CREATE_SUCCESS = "<b>🎉✅ Snapshot created successfully.</b>"
     SNAPSHOTS_UPDATE_SUCCESS = "<b>🎉✅ Snapshot updated successfully.</b>"
     SNAPSHOTS_DELETE_SUCCESS = "<b>🎉✅ Snapshot deleted successfully.</b>"
+
+    ### Primary IPs
+    PRIMARY_IPS_MENU = "<b>🌐 Primary IPs Menu</b>\n👇 Select an action from the menu below."
+    PRIMARY_IPS_NOT_FOUND = "🔍❌ Not found primary IP."
+    PRIMARY_IPS_INFO = """
+<b>🌐 Name:</b> <code>{name}</code>
+<b>🔗 IP:</b> <code>{ip}</code>
+<b>🔗 Assignee:</b> <code>{assignee}</code>
+<b>🔗 Assignee ID:</b> <code>{assignee_id}</code>
+<b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]
+"""
+    PRIMARY_IP_NOT_FOUND = "🔍❌ Not found primary IP."
+    PRIMARY_IP_ENTER_REMARK = "✏️ Enter a remark for the primary IP:"
+    PRIMARY_IPS_UPDATE_SUCCESS = "<b>🎉✅ Primary IP updated successfully.</b>"
+    PRIMARY_IP_ASSIGNEE_NOT_FOUND = "🔍❌ Not found primary IP assignee."
+    PRIMARY_IP_SELECT_ASSIGNEE = "🌍 Select a server to assign the primary IP:"
+    PRIMARY_IPS_ENTER_REMARK = "✏️ Enter a remark for the primary IP:"
+    PRIMARY_IPS_CREATE_FAILED = "⚠️❌ Primary IP creation failed."
+    PRIMARY_IPS_CREATE_SUCCESS = "<b>🎉✅ Primary IP created successfully.</b>"
+    PRIMARY_IPS_NO_DATACENTERS = "🔍❌ No datacenters found."
+    PRIMARY_IPS_SELECT_DATACENTER = "🌍 Select a datacenter for the primary IP:"

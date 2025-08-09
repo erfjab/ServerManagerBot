@@ -17,6 +17,7 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
     server = hetzner.servers.get_by_id(int(callback_data.target))
     if not server:
         return await callback_query.message.edit(text=Dialogs.SERVERS_NOT_FOUND)
+
     update = await callback_query.message.edit(
         text=Dialogs.SERVERS_INFO.format(
             name=server.name,
@@ -28,9 +29,16 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
             created=server.created.strftime("%Y-%m-%d"),
             country=server.datacenter.location.country,
             city=server.datacenter.location.city,
-            image=server.image.name,
+            image=server.image.name or server.image.description,
             created_day=(datetime.now(tz=timezone.utc) - server.created).days,
             disk=server.server_type.disk,
+            snapshot=len(
+                [
+                    snapshot
+                    for snapshot in hetzner.images.get_all(type="snapshot")
+                    if snapshot.created_from and snapshot.created_from.id == server.id
+                ]
+            ),
             traffic=round(
                 ((server.ingoing_traffic or 0) + (server.outgoing_traffic or 0)) / 1024**3,
                 3,

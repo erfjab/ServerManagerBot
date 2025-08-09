@@ -31,6 +31,7 @@ class Dialogs(StrEnum):
 <b>⚙️ Cpu:</b> <code>{cpu} Core</code>
 <b>🗂️ Ram:</b> <code>{ram} GB</code>
 <b>🗃️ Disk:</b> <code>{disk} GB</code>
+<b>📸 Snapshots:</b> <code>{snapshot}</code>
 <b>🎟️ Image:</b> <code>{image}</code>
 <b>⚡ Traffic:</b> <code>{traffic} GB</code>
 <b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]
@@ -46,3 +47,7 @@ class Dialogs(StrEnum):
     SERVERS_CREATION_SUCCESS = "<b>✅ Server created successfully.</b>\nYou can now manage the server."
     SERVERS_CREATION_FAILED = "❌ Server creation failed."
     SERVERS_PASSWORD_RESET_SUCCESS = "✅ Server password reset successfully.\nYour new password: <code>{password}</code>"
+    SERVERS_SNAPSHOT_DELETE_CONFIRM = (
+        "<b>Are you sure you want to delete the snapshot?</b>\nThis action cannot be undone. select a snapshot to delete."
+    )
+    SERVERS_SNAPSHOT_NOT_FOUND = "❌ Not found snapshot."

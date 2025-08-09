@@ -24,3 +24,5 @@ class Buttons(StrEnum):
     SERVERS_RESET = "Reset"
     SERVERS_REMOVE = "Remove Server"
     SERVERS_CREATE = "Create Server"
+    SERVERS_CREATE_SNAPSHOT = "Create Snapshot"
+    SERVERS_DEL_SNAPSHOT = "Delete Snapshot"

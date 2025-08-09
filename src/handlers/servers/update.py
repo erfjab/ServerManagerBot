@@ -25,6 +25,9 @@ async def servers_update(
     hetzner: GetHetzner,
 ):
     kb = BotKB.servers_back(id=callback_data.target)
+    server = hetzner.servers.get_by_id(int(callback_data.target))
+    if not server:
+        return await callback_query.message.edit(text=Dialogs.SERVERS_NOT_FOUND, reply_markup=kb)
     match callback_data.step:
         case (
             StepType.SERVERS_POWER_OFF
@@ -33,6 +36,7 @@ async def servers_update(
             | StepType.SERVERS_RESET
             | StepType.SERVERS_REBOOT
             | StepType.SERVERS_REMOVE
+            | StepType.SERVERS_CREATE_SNAPSHOT
         ):
             text = Dialogs.ACTIONS_CONFIRM
             _state = ServerUpdateForm.approval
@@ -40,10 +44,22 @@ async def servers_update(
         case StepType.SERVERS_REBUILD:
             text = Dialogs.SERVERS_REBUILD_CONFIRM
             _state = ServerUpdateForm.select
-            images = hetzner.images.get_all()
+            images = hetzner.images.get_all(type=["system", "snapshot"], architecture=server.image.architecture)
             if not images:
                 return await callback_query.answer(text=Dialogs.SERVERS_IMAGES_NOT_FOUND, show_alert=True)
+            images.sort(key=lambda x: x.name or x.description)
+            images.sort(key=lambda x: x.type, reverse=True)
             kb = BotKB.images_select(images=images, task=TaskType.UPDATE, target=callback_data.target)
+        case StepType.SERVERS_DEL_SNAPSHOT:
+            text = Dialogs.SERVERS_SNAPSHOT_DELETE_CONFIRM
+            _state = ServerUpdateForm.select
+            images = hetzner.images.get_all(type="snapshot")
+            if not images:
+                return await callback_query.answer(text=Dialogs.SERVERS_SNAPSHOT_NOT_FOUND, show_alert=True)
+            images = [img for img in images if img.created_from and img.created_from.id == int(callback_data.target)]
+            if not images:
+                return await callback_query.answer(text=Dialogs.SERVERS_SNAPSHOT_NOT_FOUND, show_alert=True)
+            kb = BotKB.images_select(images=images, task=TaskType.UPDATE, target=int(callback_data.target))
         case _:
             return await callback_query.answer(text="Invalid step!", show_alert=True)
     await state.upsert_context(db=db, state=_state, step=callback_data.step, target=callback_data.target)
@@ -95,6 +111,8 @@ async def approval_handler(
             server.reset()
         case StepType.SERVERS_REBOOT:
             server.reboot()
+        case StepType.SERVERS_CREATE_SNAPSHOT:
+            server.create_image(type="snapshot")
         case StepType.SERVERS_REMOVE:
             server.delete()
             kb = BotKB.servers_back()
@@ -103,6 +121,13 @@ async def approval_handler(
             if not image:
                 return await callback_query.message.edit(text=Dialogs.SERVERS_IMAGES_NOT_FOUND, reply_markup=BotKB.home_back())
             server.rebuild(image=image)
+        case StepType.SERVERS_DEL_SNAPSHOT:
+            image = hetzner.images.get_by_id(int(state_data["image_id"]))
+            if not image:
+                return await callback_query.message.edit(
+                    text=Dialogs.SERVERS_SNAPSHOT_NOT_FOUND, reply_markup=BotKB.home_back()
+                )
+            image.delete()
 
     await state.clear_state(db=db)
     return await callback_query.message.edit(text=Dialogs.ACTIONS_SUCCESS, reply_markup=kb)

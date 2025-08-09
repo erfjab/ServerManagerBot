@@ -29,6 +29,8 @@ class StepType(StrEnum):
     SERVERS_RESET_PASSWORD = "rsp"
     SERVERS_RESET = "rst"
     SERVERS_REMOVE = "rms"
+    SERVERS_CREATE_SNAPSHOT = "crs"
+    SERVERS_DEL_SNAPSHOT = "dsp"
 
 
 class BotCB(CallbackData, prefix="x"):

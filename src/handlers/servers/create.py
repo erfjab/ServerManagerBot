@@ -46,6 +46,7 @@ async def datacenter_handler(
     plans = hetzner.server_types.get_all()
     if not plans:
         return await callback_query.answer(text=Dialogs.SERVERS_PLANS_NOT_FOUND, show_alert=True)
+    plans.sort(key=lambda x: float(x.prices[0]["price_monthly"]["net"]))
     await state.upsert_context(db=db, state=ServerCreateForm.plan, datacenter_id=callback_data.target)
     return await callback_query.message.edit(text=Dialogs.SERVERS_SELECT_PLAN, reply_markup=BotKB.plans_select(plans=plans))
 
@@ -54,9 +55,14 @@ async def datacenter_handler(
 async def plan_handler(
     callback_query: CallbackQuery, callback_data: BotCB, db: AsyncSession, state: StateManager, hetzner: GetHetzner
 ):
-    images = hetzner.images.get_all()
+    plan = hetzner.server_types.get_by_id(int(callback_data.target))
+    if not plan:
+        return await callback_query.answer(text=Dialogs.SERVERS_PLANS_NOT_FOUND, show_alert=True)
+    images = hetzner.images.get_all(type=["system", "snapshot"], architecture=plan.architecture)
     if not images:
         return await callback_query.answer(text=Dialogs.SERVERS_IMAGES_NOT_FOUND, show_alert=True)
+    images.sort(key=lambda x: x.name or x.description)
+    images.sort(key=lambda x: x.type, reverse=True)
     await state.upsert_context(db=db, state=ServerCreateForm.image, plan_id=callback_data.target)
     return await callback_query.message.edit(
         text=Dialogs.SERVERS_SELECT_IMAGE, reply_markup=BotKB.images_select(images=images, task=TaskType.CREATE)

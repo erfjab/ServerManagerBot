@@ -95,7 +95,7 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def clients_back(cls, id: int) -> InlineKeyboardMarkup:
+    def clients_back(cls, id: int = 0) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         kb.add(
             text=Buttons.BACK,
@@ -151,8 +151,10 @@ class BotKB:
         update = {
             StepType.SERVERS_POWER_OFF: Buttons.SERVERS_POWER_OFF,
             StepType.SERVERS_POWER_ON: Buttons.SERVERS_POWER_ON,
+            StepType.SERVERS_CREATE_SNAPSHOT: Buttons.SERVERS_CREATE_SNAPSHOT,
             StepType.SERVERS_REBOOT: Buttons.SERVERS_REBOOT,
             StepType.SERVERS_REBUILD: Buttons.SERVERS_REBUILD,
+            StepType.SERVERS_DEL_SNAPSHOT: Buttons.SERVERS_DEL_SNAPSHOT,
             StepType.SERVERS_RESET_PASSWORD: Buttons.SERVERS_RESET_PASSWORD,
             StepType.SERVERS_RESET: Buttons.SERVERS_RESET,
             StepType.SERVERS_REMOVE: Buttons.SERVERS_REMOVE,
@@ -167,12 +169,12 @@ class BotKB:
                     step=step,
                 ).pack(),
             )
-        kb.adjust(2, 2, 2, 1)
+        kb.adjust(2, 1, 2, 1, 2, 1)
         cls._back(kb=kb, area=AreaType.SERVER)
         return kb.as_markup()
 
     @classmethod
-    def servers_back(cls, id: int) -> InlineKeyboardMarkup:
+    def servers_back(cls, id: int = 0) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         cls._back(kb=kb, area=AreaType.SERVER, target=id)
         return kb.as_markup()
@@ -182,7 +184,7 @@ class BotKB:
         kb = InlineKeyboardBuilder()
         for image in images:
             kb.add(
-                text=image.name,
+                text=image.name or image.description,
                 callback_data=BotCB(
                     area=AreaType.SERVER,
                     task=task,
@@ -214,7 +216,7 @@ class BotKB:
         kb = InlineKeyboardBuilder()
         for plan in plans:
             kb.add(
-                text=f"{plan.name} [{plan.memory} RAM, {plan.cores} CPU, {plan.disk} Disk]",
+                text=f"{plan.name} [{plan.memory} RAM, {plan.cores} CPU, {float(plan.prices[0]['price_monthly']['net'])} EUR]",
                 callback_data=BotCB(
                     area=AreaType.SERVER,
                     task=TaskType.CREATE,

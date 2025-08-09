@@ -11,6 +11,7 @@ class Dialogs(StrEnum):
     ACTIONS_CONFIRM = "<b>❓ Are you sure you want to proceed?</b>\n🔘 Please approve to continue or cancel to go back."
     ACTIONS_CANCELLED = "<b>🚫❌ Action cancelled.</b>\n↩️ Go back to the previous menu."
     ACTIONS_DUPLICATE = "<b>⚠️❌ A item with this remark already exists.</b>\n\n🔄 Please choose a different remark."
+    ACTIONS_WAITING = "<b>⏳ Please wait...</b>"
 
     ### Clients
     CLIENTS_MENU = "<b>👥 Clients Menu</b>\n👇 Select an action from the menu below."
@@ -51,6 +52,8 @@ class Dialogs(StrEnum):
         "<b>⚠️ Are you sure you want to delete the snapshot?</b>\n🗑️ This action cannot be undone. select a snapshot to delete."
     )
     SERVERS_SNAPSHOT_NOT_FOUND = "🔍❌ Not found snapshot."
+    SERVERS_PRIMARY_IPS_NOT_FOUND = "🔍❌ Not found primary IPs."
+    SERVERS_ASSIGN_SELECT = "🌍 Select a primary IP to assign to the server:"
 
     ### Snapshots
     SNAPSHOTS_MENU = "<b>📸 Snapshots Menu</b>\n👇 Select an action from the menu below."

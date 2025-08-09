@@ -1,3 +1,4 @@
+import asyncio
 from eiogram import Router
 from eiogram.types import CallbackQuery
 from eiogram.filters import StateFilter
@@ -13,7 +14,8 @@ router = Router()
 
 class ServerUpdateForm(StateGroup):
     approval = State()
-    select = State()
+    image = State()
+    ip = State()
 
 
 @router.callback_query(BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
@@ -37,13 +39,29 @@ async def servers_update(
             | StepType.SERVERS_REBOOT
             | StepType.SERVERS_REMOVE
             | StepType.SERVERS_CREATE_SNAPSHOT
+            | StepType.SERVERS_UNASSIGN_IPV4
+            | StepType.SERVERS_UNASSIGN_IPV6
         ):
             text = Dialogs.ACTIONS_CONFIRM
             _state = ServerUpdateForm.approval
             kb = BotKB.approval(area=AreaType.SERVER, task=TaskType.UPDATE)
+        case StepType.SERVERS_ASSIGN:
+            primary_ips = hetzner.primary_ips.get_all()
+            if not primary_ips:
+                return await callback_query.answer(text=Dialogs.SERVERS_PRIMARY_IPS_NOT_FOUND, show_alert=True)
+            for ip in primary_ips:
+                print(f"Primary IP: {ip.id} - {ip.name}")
+            filtered_ips = [ip for ip in primary_ips if not ip.assignee_id]
+            if not filtered_ips:
+                return await callback_query.answer(text=Dialogs.SERVERS_PRIMARY_IPS_NOT_FOUND, show_alert=True)
+            for ip in filtered_ips:
+                print(f"Filtered Primary IP: {ip.id} - {ip.name}")
+            text = Dialogs.SERVERS_ASSIGN_SELECT
+            _state = ServerUpdateForm.ip
+            kb = BotKB.servers_primary_ips_select(primary_ips=filtered_ips)
         case StepType.SERVERS_REBUILD:
             text = Dialogs.SERVERS_REBUILD_CONFIRM
-            _state = ServerUpdateForm.select
+            _state = ServerUpdateForm.image
             images = hetzner.images.get_all(type=["system", "snapshot"], architecture=server.image.architecture)
             if not images:
                 return await callback_query.answer(text=Dialogs.SERVERS_IMAGES_NOT_FOUND, show_alert=True)
@@ -52,7 +70,7 @@ async def servers_update(
             kb = BotKB.images_select(images=images, task=TaskType.UPDATE, target=callback_data.target)
         case StepType.SERVERS_DEL_SNAPSHOT:
             text = Dialogs.SERVERS_SNAPSHOT_DELETE_CONFIRM
-            _state = ServerUpdateForm.select
+            _state = ServerUpdateForm.image
             images = hetzner.images.get_all(type="snapshot")
             if not images:
                 return await callback_query.answer(text=Dialogs.SERVERS_SNAPSHOT_NOT_FOUND, show_alert=True)
@@ -66,7 +84,7 @@ async def servers_update(
     return await callback_query.message.edit(text=text, reply_markup=kb)
 
 
-@router.callback_query(StateFilter(ServerUpdateForm.select), BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
+@router.callback_query(StateFilter(ServerUpdateForm.image), BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
 async def select_image_handler(
     callback_query: CallbackQuery,
     callback_data: BotCB,
@@ -78,6 +96,32 @@ async def select_image_handler(
         text=Dialogs.ACTIONS_CONFIRM,
         reply_markup=BotKB.approval(area=AreaType.SERVER, task=TaskType.UPDATE),
     )
+
+
+@router.callback_query(StateFilter(ServerUpdateForm.ip), BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
+async def select_ip_handler(
+    callback_query: CallbackQuery,
+    callback_data: BotCB,
+    db: AsyncSession,
+    state: StateManager,
+    hetzner: GetHetzner,
+    state_data: dict,
+):
+    primary_ip = hetzner.primary_ips.get_by_id(int(callback_data.target))
+    if not primary_ip:
+        return await callback_query.message.edit(text=Dialogs.SERVERS_PRIMARY_IPS_NOT_FOUND, reply_markup=BotKB.home_back())
+    server = hetzner.servers.get_by_id(int(state_data["target"]))
+    if not server:
+        return await callback_query.answer(text=Dialogs.SERVERS_NOT_FOUND, show_alert=True)
+
+    await callback_query.message.edit(text=Dialogs.ACTIONS_WAITING)
+    if server.status != "off":
+        server.power_off()
+    await asyncio.sleep(2)
+    primary_ip.assign(assignee_id=server.id, assignee_type="server")
+    await asyncio.sleep(2)
+    await state.clear_state(db=db)
+    return await callback_query.message.edit(text=Dialogs.ACTIONS_SUCCESS, reply_markup=BotKB.servers_back(server.id))
 
 
 @router.callback_query(StateFilter(ServerUpdateForm.approval), BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
@@ -98,6 +142,20 @@ async def approval_handler(
 
     kb = BotKB.servers_back(id=server.id)
     match state_data["step"]:
+        case StepType.SERVERS_UNASSIGN_IPV4:
+            await callback_query.message.edit(text=Dialogs.ACTIONS_WAITING)
+            if server.status != "off":
+                server.power_off()
+            await asyncio.sleep(2)
+            if server.public_net.primary_ipv4:
+                server.public_net.primary_ipv4.unassign()
+        case StepType.SERVERS_UNASSIGN_IPV6:
+            await callback_query.message.edit(text=Dialogs.ACTIONS_WAITING)
+            if server.status != "off":
+                server.power_off()
+            await asyncio.sleep(2)
+            if server.public_net.primary_ipv6:
+                server.public_net.primary_ipv6.unassign()
         case StepType.SERVERS_POWER_OFF:
             server.power_off()
         case StepType.SERVERS_POWER_ON:

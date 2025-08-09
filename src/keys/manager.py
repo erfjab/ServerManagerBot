@@ -154,6 +154,7 @@ class BotKB:
     def servers_update(cls, server: Server) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         update = {
+            StepType.SERVERS_REMARK: Buttons.SERVERS_REMARK,
             StepType.SERVERS_POWER_OFF: Buttons.SERVERS_POWER_OFF,
             StepType.SERVERS_POWER_ON: Buttons.SERVERS_POWER_ON,
             StepType.SERVERS_CREATE_SNAPSHOT: Buttons.SERVERS_CREATE_SNAPSHOT,
@@ -163,6 +164,9 @@ class BotKB:
             StepType.SERVERS_RESET_PASSWORD: Buttons.SERVERS_RESET_PASSWORD,
             StepType.SERVERS_RESET: Buttons.SERVERS_RESET,
             StepType.SERVERS_REMOVE: Buttons.SERVERS_REMOVE,
+            StepType.SERVERS_UNASSIGN_IPV4: Buttons.SERVERS_UNASSIGN_IPV4,
+            StepType.SERVERS_UNASSIGN_IPV6: Buttons.SERVERS_UNASSIGN_IPV6,
+            StepType.SERVERS_ASSIGN: Buttons.SERVERS_ASSIGN,
         }
         for step, button in update.items():
             kb.add(
@@ -174,7 +178,7 @@ class BotKB:
                     step=step,
                 ).pack(),
             )
-        kb.adjust(2, 1, 2, 1, 2, 1)
+        kb.adjust(1, 2, 1, 2, 1, 2, 1, 2, 1)
         cls._back(kb=kb, area=AreaType.SERVER)
         return kb.as_markup()
 
@@ -393,4 +397,20 @@ class BotKB:
             )
         kb.adjust(1)
         cls._back(kb=kb, area=AreaType.PRIMARY_IP, target=target)
+        return kb.as_markup()
+
+    @classmethod
+    def servers_primary_ips_select(cls, primary_ips: List[PrimaryIP]) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for primary_ip in primary_ips:
+            kb.add(
+                text=f"{primary_ip.name} [{primary_ip.ip}]",
+                callback_data=BotCB(
+                    area=AreaType.SERVER,
+                    task=TaskType.UPDATE,
+                    target=primary_ip.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.SERVER)
         return kb.as_markup()

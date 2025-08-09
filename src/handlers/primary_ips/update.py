@@ -99,7 +99,7 @@ async def approval_handler(
             primary_ip.delete()
             kb = BotKB.primary_ips_back()
         case StepType.PRIMARY_IPS_UNASSIGN:
-            await callback_query.message.edit(text="Unassigning primary IP...")
+            await callback_query.message.edit(text=Dialogs.ACTIONS_WAITING)
             if not primary_ip.assignee_id:
                 return await callback_query.answer(text=Dialogs.PRIMARY_IP_ASSIGNEE_NOT_FOUND, show_alert=True)
             server = hetzner.servers.get_by_id(int(primary_ip.assignee_id))

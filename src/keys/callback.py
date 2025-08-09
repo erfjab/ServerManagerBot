@@ -31,6 +31,9 @@ class StepType(StrEnum):
     SERVERS_REMOVE = "rms"
     SERVERS_CREATE_SNAPSHOT = "crs"
     SERVERS_DEL_SNAPSHOT = "dsp"
+    SNAPSHOTS_RESTORE = "srs"
+    SNAPSHOTS_DELETE = "sds"
+    SNAPSHOTS_REMARK = "srm"
 
 
 class BotCB(CallbackData, prefix="x"):

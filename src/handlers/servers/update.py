@@ -90,7 +90,7 @@ async def approval_handler(
     hetzner: GetHetzner,
 ):
     if not callback_data.is_approve:
-        return await callback_query.message.edit(text=Dialogs.ACTIONS_CANCELLED, reply_markup=BotKB.home_back())
+        return await callback_query.message.edit(text=Dialogs.ACTIONS_CANCELLED, reply_markup=BotKB.servers_back())
 
     server = hetzner.servers.get_by_id(int(state_data["target"]))
     if not server:

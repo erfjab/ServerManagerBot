@@ -51,3 +51,20 @@ class Dialogs(StrEnum):
         "<b>⚠️ Are you sure you want to delete the snapshot?</b>\n🗑️ This action cannot be undone. select a snapshot to delete."
     )
     SERVERS_SNAPSHOT_NOT_FOUND = "🔍❌ Not found snapshot."
+
+    ### Snapshots
+    SNAPSHOTS_MENU = "<b>📸 Snapshots Menu</b>\n👇 Select an action from the menu below."
+    SNAPSHOTS_NOT_FOUND = "<b>🔍❌ Not found snapshot.</b>"
+    SNAPSHOTS_INFO = """
+<b>📸 Name:</b> <code>{name}</code>
+<b>🔗 Status:</b> <code>{status}</code>
+<b>💾 Size:</b> <code>{size} GB</code>
+<b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]
+"""
+    SNAPSHOTS_ENTER_REMARK = "✏️ Enter a remark for the snapshot:"
+    SNAPSHOTS_SERVERS_NOT_FOUND = "🔍❌ Not found servers for the snapshot."
+    SNAPSHOTS_SELECT_SERVER = "🌍 Select a server for the snapshot:"
+    SNAPSHOTS_SERVER_NOT_FOUND = "🔍❌ Server not found."
+    SNAPSHOTS_CREATE_SUCCESS = "<b>🎉✅ Snapshot created successfully.</b>"
+    SNAPSHOTS_UPDATE_SUCCESS = "<b>🎉✅ Snapshot updated successfully.</b>"
+    SNAPSHOTS_DELETE_SUCCESS = "<b>🎉✅ Snapshot deleted successfully.</b>"

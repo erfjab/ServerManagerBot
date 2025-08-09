@@ -141,8 +141,12 @@ class BotKB:
                 text=Buttons.SERVERS_CREATE,
                 callback_data=BotCB(area=AreaType.SERVER, task=TaskType.CREATE).pack(),
             ),
+            InlineKeyboardButton(
+                text=Buttons.BACK,
+                callback_data=BotCB(area=AreaType.HOME, task=TaskType.MENU).pack(),
+            ),
+            size=2,
         )
-        cls._back(kb=kb, area=AreaType.CLIENT)
         return kb.as_markup()
 
     @classmethod
@@ -225,4 +229,75 @@ class BotKB:
             )
         kb.adjust(1)
         cls._back(kb=kb, area=AreaType.SERVER)
+        return kb.as_markup()
+
+    @classmethod
+    def snapshots_menu(cls, snapshots: List[Image]) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for snapshot in snapshots:
+            kb.add(
+                text=snapshot.name or snapshot.description,
+                callback_data=BotCB(
+                    area=AreaType.SNAPSHOT,
+                    task=TaskType.INFO,
+                    target=snapshot.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        kb.row(
+            InlineKeyboardButton(
+                text=Buttons.SNAPSHOTS_CREATE,
+                callback_data=BotCB(area=AreaType.SNAPSHOT, task=TaskType.CREATE).pack(),
+            ),
+            InlineKeyboardButton(
+                text=Buttons.BACK,
+                callback_data=BotCB(area=AreaType.HOME, task=TaskType.MENU).pack(),
+            ),
+            size=2,
+        )
+        return kb.as_markup()
+
+    @classmethod
+    def snapshots_update(cls, snapshot: Image) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        updates = {
+            Buttons.SNAPSHOTS_REMARK: StepType.SNAPSHOTS_REMARK,
+            Buttons.SNAPSHOTS_DELETE: StepType.SNAPSHOTS_DELETE,
+        }
+        for button, step in updates.items():
+            kb.add(
+                text=button,
+                callback_data=BotCB(
+                    area=AreaType.SNAPSHOT,
+                    task=TaskType.UPDATE,
+                    step=step,
+                    target=snapshot.id,
+                ).pack(),
+            )
+        kb.adjust(2)
+        cls._back(kb=kb, area=AreaType.SNAPSHOT)
+        return kb.as_markup()
+
+    @classmethod
+    def snapshots_back(cls, id: int = 0) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        cls._back(kb=kb, area=AreaType.SNAPSHOT, target=id)
+        return kb.as_markup()
+
+    @classmethod
+    def snapshots_select_server(
+        cls, servers: List[Server], task: TaskType = TaskType.CREATE, target: int = 0
+    ) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for server in servers:
+            kb.add(
+                text=server.name,
+                callback_data=BotCB(
+                    area=AreaType.SNAPSHOT,
+                    task=task,
+                    target=server.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.SNAPSHOT, target=target)
         return kb.as_markup()

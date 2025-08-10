@@ -23,5 +23,5 @@ async def main():
     logging.info("Bot commands set successfully.")
     logging.info(f"Admin IDs: {TELEGRAM_ADMINS_ID}")
     bot_data = await BOT.get_me()
-    logging.info(f"Ready to start polling as @{bot_data.username} [{bot_data.full_name}]")
+    logging.info(f"Ready to start polling as @{bot_data.username}")
     await DP.run_polling(interval=1, timeout=1)

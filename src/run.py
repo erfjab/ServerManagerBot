@@ -8,9 +8,9 @@ from src.utils.state import DatabaseStorage
 
 
 async def main():
-    logging.info("Starting the bot...")
+    logging.info("Configuring bot.")
     await BOT.delete_webhook()
-    logging.info("Webhook deleted, starting polling...")
+    logging.info("Deleted bot webhook.")
     DP.storage = DatabaseStorage()
     logging.info("Dispatcher state storage initialized.")
     DP.include_router(setup_handlers())

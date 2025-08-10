@@ -1,72 +1,148 @@
-## Prerequisites
+## **Setup**  
 
-Ensure the following requirements are met before proceeding with installation:
-- **Operating System**: Ubuntu
-- **Permissions**: Root or sudo access
+### **Server and Docker Setup**  
 
-## Installation
+<details>
+<summary>Show Server Commands</summary>
 
-To install the `ServerManagerBot` bot, execute the following commands:
-
-1. Download and set up the script:
-   ```bash
-   sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/ServerManagerBot/master/install.sh)" @ install-script
-   ```
-
-2. Install the bot:
-   ```bash
-   ServerManagerBot install
-   ```
-
-3. Set up the system service:
-   ```bash
-   ServerManagerBot install-service
-   ```
-
-4. Start the handler:
-   ```bash
-   ServerManagerBot start
-   ```
-
-### Installation Details
-
-The above steps will:
-1. **Check and Install Dependencies**: Ensure all necessary software is installed.
-2. **Clone Repository**: Retrieve the `ServerManagerBot` repository securely.
-3. **Create Python Environment**: Set up an isolated environment for Python packages.
-4. **Create and Enable Service**: Register `ServerManagerBot` as a system service.
-5. **Launch the Bot**: Start the bot, which will run continuously in the background.
-
-## Usage
-
-After installation, you can manage the `ServerManagerBot` bot using the following commands:
-
+#### 1. Update the Server  
 ```bash
-ServerManagerBot <command>
+sudo apt update && sudo apt upgrade -y
 ```
 
-### Commands
-
-- `install`: Set up the bot, including dependencies and initial configuration.
-- `start`: Start the bot service.
-- `stop`: Stop the bot service.
-- `restart`: Restart the bot service.
-- `status`: Check the current status of the bot service.
-- `logs`: View the bot’s logs in real time.
-- `update`: Pull the latest changes from the repository and apply updates.
-- `uninstall`: Fully remove the bot and all related files.
-- `help`: Display a help message with all available commands.
-
-## Directory Structure
-
-- **Installation Directory**: `/opt/erfjab/ServerManagerBot`
-- **Log File**: `/opt/erfjab/ServerManagerBot/ServerManagerBot.log`
-- **Service File**: `/etc/systemd/system/ServerManagerBot.service`
-
-## Uninstallation
-
-To completely remove `ServerManagerBot` and all associated files, execute:
-
+#### 2. Install Docker  
 ```bash
-sudo ServerManagerBot uninstall
+curl -fsSL https://get.docker.com | sh
 ```
+</details>
+
+---
+
+### **Install & Run the Bot**  
+
+<details>
+<summary>Show Run Commands</summary>
+
+#### 1. Create Directory and Download Files  
+```bash
+mkdir -p /opt/erfjab/servermanagerbot/data
+curl -o /opt/erfjab/servermanagerbot/docker-compose.yml https://raw.githubusercontent.com/erfjab/servermanagerbot/master/docker-compose.yml
+cd /opt/erfjab/servermanagerbot
+curl -o .env https://raw.githubusercontent.com/erfjab/servermanagerbot/master/.env.example
+```
+
+#### 2. Config .env
+```bash
+nano .env
+```
+
+#### 3. Pull Docker Image  
+```bash
+docker compose pull
+```
+
+#### 4. Start the Bot  
+```bash
+docker compose up -d
+```
+
+After a few moments, the bot will start running.
+
+</details>
+
+---
+
+### **Update the Bot**  
+
+<details>
+<summary>Show Update Commands</summary>
+
+Make sure you're in the **servermanagerbot** directory:  
+```bash
+cd /opt/erfjab/servermanagerbot
+```
+
+Then update the bot:  
+```bash
+docker compose pull && docker compose up -d
+```
+
+</details>
+
+---
+
+### **Manage the Bot**  
+
+<details>
+<summary>Show Manage Commands</summary>
+
+Make sure you're in the **servermanagerbot** directory:  
+```bash
+cd /opt/erfjab/servermanagerbot
+```
+
+- **Restart the Bot:**  
+  ```bash
+  docker compose restart
+  ```
+
+- **Stop the Bot:**  
+  ```bash
+  docker compose down
+  ```
+
+- **View Logs:**  
+  ```bash
+  docker compose logs -f
+  ```
+
+</details>
+
+---
+
+### **Switch to GA Mode (preview mode)**  
+
+<details>
+<summary>Show GA Commands</summary>
+
+Make sure you're in the **HolderBot** directory:  
+```bash
+cd /opt/erfjab/servermanagerbot
+```
+
+- **Open the Docker Compose File:**  
+  ```bash
+  nano docker-compose.yml
+  ```
+
+- **Change the Image Tag:**  
+  
+  **From:**  
+  ```yaml
+  erfjab/servermanagerbot:latest
+  ```
+  **To:**  
+  ```yaml
+  erfjab/servermanagerbot:ga
+  ```
+
+- **Pull the Docker Image:**  
+  ```bash
+  docker compose pull
+  ```
+
+- **Start the Bot:**  
+  ```bash
+  docker compose up -d
+  ```
+</details>
+
+---
+
+## **Support**  
+
+- **Telegram Channel:** [@ErfJabs](https://t.me/ErfJabs)  
+- **Telegram Chat:** [@ErfJabChat](https://t.me/erfjabgroup)  
+
+⭐ **Star the Project:**  
+[![Stargazers](https://starchart.cc/erfjab/servermanagerbot.svg?variant=adaptive)](https://starchart.cc/erfjab/servermanagerbot)  

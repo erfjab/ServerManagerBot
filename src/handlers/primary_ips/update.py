@@ -105,7 +105,8 @@ async def approval_handler(
             server = hetzner.servers.get_by_id(int(primary_ip.assignee_id))
             if not server:
                 return await callback_query.answer(text=Dialogs.SERVERS_NOT_FOUND, show_alert=True)
-            server.power_off()
+            if server.status != "off":
+                server.power_off()
             await asyncio.sleep(2)
             primary_ip.unassign()
 
@@ -132,7 +133,6 @@ async def select_handler(
 
     primary_ip.assign(assignee_id=server.id, assignee_type="server")
     await asyncio.sleep(2)
-    server.power_on()
 
     await state.clear_state(db=db)
     return await callback_query.message.edit(

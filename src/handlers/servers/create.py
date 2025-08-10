@@ -22,7 +22,7 @@ class ServerCreateForm(StateGroup):
 async def servers_create(callback_query: CallbackQuery, db: AsyncSession, state: StateManager, state_data: dict):
     await state.upsert_context(db=db, state=ServerCreateForm.remark)
     return await callback_query.message.edit(
-        text=Dialogs.SERVERS_ENTER_REMARK, reply_markup=BotKB.servers_back(state_data["client_id"])
+        text=Dialogs.SERVERS_ENTER_REMARK, reply_markup=BotKB.servers_back()
     )
 
 

@@ -3,14 +3,17 @@ from enum import StrEnum
 
 class Buttons(StrEnum):
     OWNER = "🌚 Owner"
+    BACK = "🔙 Back"
+    YES = "✅ Yes"
+    NO = "❌ No"
+
+    ### Clients
     CLIENTS_ADD = "➕ Add Client"
     CLIENTS_CHANGE_SECRET = "🔑 Change Secret"
     CLIENTS_CHANGE_REMARK = "✏️ Change Remark"
     CLIENTS_REMOVE = "❌ Remove Client"
-    BACK = "🔙 Back"
-    CREATE_CREATE = "🆕 Create Client"
-    YES = "✅ Yes"
-    NO = "❌ No"
+    CLIENTS_SETTING = "⚙️ Client Settings"
+    CLIENTS_CREATE = "🆕 Create Client"
 
     ### Servers
     SERVERS = "🖥️ Servers"

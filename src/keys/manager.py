@@ -38,7 +38,7 @@ class BotKB:
         kb.adjust(2)
         kb.row(
             InlineKeyboardButton(
-                text=Buttons.CREATE_CREATE, callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.CREATE).pack()
+                text=Buttons.CLIENTS_CREATE, callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.CREATE).pack()
             ),
             size=1,
         )
@@ -61,6 +61,28 @@ class BotKB:
             text=Buttons.PRIMARY_IPS,
             callback_data=BotCB(area=AreaType.PRIMARY_IP, task=TaskType.MENU, target=id).pack(),
         )
+        kb.add(
+            text=Buttons.CLIENTS_SETTING,
+            callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.INFO, target=id).pack(),
+        )
+        kb.adjust(1, 2, 1)
+
+        cls._back(kb=kb)
+
+        return kb.as_markup()
+
+    @classmethod
+    def clients_back(cls, id: int = 0) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        kb.add(
+            text=Buttons.BACK,
+            callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.MENU, target=id).pack(),
+        )
+        return kb.as_markup()
+
+    @classmethod
+    def clients_update(cls, id: int) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
         kb.add(
             text=Buttons.CLIENTS_CHANGE_REMARK,
             callback_data=BotCB(
@@ -88,20 +110,8 @@ class BotKB:
                 step=StepType.REMOVE_CLIENT,
             ).pack(),
         )
-
-        kb.adjust(1, 2, 2, 1)
-
+        kb.adjust(1)
         cls._back(kb=kb)
-
-        return kb.as_markup()
-
-    @classmethod
-    def clients_back(cls, id: int = 0) -> InlineKeyboardMarkup:
-        kb = InlineKeyboardBuilder()
-        kb.add(
-            text=Buttons.BACK,
-            callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.MENU, target=id).pack(),
-        )
         return kb.as_markup()
 
     @classmethod

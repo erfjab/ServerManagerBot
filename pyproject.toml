@@ -2,19 +2,17 @@
 line-length = 128
 
 [project]
-name = "threebot"
+name = "ServerManagerBot"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "alembic>=1.16.4",
-    "asyncpg>=0.30.0",
-    "dotenv>=0.9.9",
-    "eiogram>=1.7.2",
-    "fastapi==0.115.13",
-    "hcloud>=2.5.4",
-    "python-decouple>=3.8",
-    "sqlalchemy[asyncio]>=2.0.42",
-    "uvicorn>=0.35.0",
+    "alembic==1.16.4",
+    "asyncpg==0.30.0",
+    "sqlalchemy[asyncio]==2.0.42",
+    "dotenv==0.9.9",
+    "python-decouple==3.8",
+    "eiogram==2.0.1",
+    "hcloud==2.5.4",
 ]

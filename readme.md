@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> We thank [PingiHost](https://t.me/PingiHost) for supporting and sponsoring this. project.
+
 ## **Setup**  
 
 ### **Server and Docker Setup**  

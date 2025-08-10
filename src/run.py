@@ -13,4 +13,4 @@ async def main():
             BotCommand(command="/start", description="Start/Restart the bot"),
         ]
     )
-    await DP.run_polling(interval=0.5, timeout=0)
+    await DP.run_polling(interval=1, timeout=1)

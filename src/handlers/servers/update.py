@@ -45,17 +45,18 @@ async def servers_update(
             text = Dialogs.ACTIONS_CONFIRM
             _state = ServerUpdateForm.approval
             kb = BotKB.approval(area=AreaType.SERVER, task=TaskType.UPDATE)
-        case StepType.SERVERS_ASSIGN:
+        case StepType.SERVERS_ASSIGN_IPV4 | StepType.SERVERS_ASSIGN_IPV6:
+            ip_type = "ipv4" if callback_data.step == StepType.SERVERS_ASSIGN_IPV4 else "ipv6"
+            if ip_type == "ipv4" and server.public_net.primary_ipv4:
+                return await callback_query.answer(text=Dialogs.SERVERS_ASSIGN_UNASSIGN_IPV4, show_alert=True)
+            if ip_type == "ipv6" and server.public_net.primary_ipv6:
+                return await callback_query.answer(text=Dialogs.SERVERS_ASSIGN_UNASSIGN_IPV6, show_alert=True)
             primary_ips = hetzner.primary_ips.get_all()
             if not primary_ips:
                 return await callback_query.answer(text=Dialogs.SERVERS_PRIMARY_IPS_NOT_FOUND, show_alert=True)
-            for ip in primary_ips:
-                print(f"Primary IP: {ip.id} - {ip.name}")
-            filtered_ips = [ip for ip in primary_ips if not ip.assignee_id]
+            filtered_ips = [ip for ip in primary_ips if not ip.assignee_id and ip.type == ip_type]
             if not filtered_ips:
                 return await callback_query.answer(text=Dialogs.SERVERS_PRIMARY_IPS_NOT_FOUND, show_alert=True)
-            for ip in filtered_ips:
-                print(f"Filtered Primary IP: {ip.id} - {ip.name}")
             text = Dialogs.SERVERS_ASSIGN_SELECT
             _state = ServerUpdateForm.ip
             kb = BotKB.servers_primary_ips_select(primary_ips=filtered_ips)

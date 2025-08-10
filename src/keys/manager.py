@@ -166,7 +166,8 @@ class BotKB:
             StepType.SERVERS_REMOVE: Buttons.SERVERS_REMOVE,
             StepType.SERVERS_UNASSIGN_IPV4: Buttons.SERVERS_UNASSIGN_IPV4,
             StepType.SERVERS_UNASSIGN_IPV6: Buttons.SERVERS_UNASSIGN_IPV6,
-            StepType.SERVERS_ASSIGN: Buttons.SERVERS_ASSIGN,
+            StepType.SERVERS_ASSIGN_IPV4: Buttons.SERVERS_ASSIGN_IPV4,
+            StepType.SERVERS_ASSIGN_IPV6: Buttons.SERVERS_ASSIGN_IPV6,
         }
         for step, button in update.items():
             kb.add(
@@ -178,7 +179,7 @@ class BotKB:
                     step=step,
                 ).pack(),
             )
-        kb.adjust(1, 2, 1, 2, 1, 2, 1, 2, 1)
+        kb.adjust(1, 2, 1, 2, 1, 2, 1, 2, 2)
         cls._back(kb=kb, area=AreaType.SERVER)
         return kb.as_markup()
 

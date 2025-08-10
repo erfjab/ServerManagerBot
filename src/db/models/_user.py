@@ -11,8 +11,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from src.config import BOT, TELEGRAM_ADMINS_ID
 from ..core import Base, GetDB
 
-logger = logging.getLogger(__name__)
-
 
 class UserState(Base):
     __tablename__ = "user_states"
@@ -62,7 +60,7 @@ class UserMessage(Base):
                 try:
                     await BOT.delete_messages(chat_id=chat_id, message_ids=message_ids)
                 except Exception as e:
-                    logger.warning(f"Failed to delete messages: {e}")
+                    logging.warning(f"Failed to delete messages: {e}")
             await db.execute(delete(UserMessage).where(delete_condition))
             message = update.message if isinstance(update, CallbackQuery) else update
             db.add(UserMessage(chat_id=message.chat.id, message_id=message.message_id))
@@ -104,6 +102,7 @@ class User(Base):
                 full_name=user.full_name,
             )
             db.add(dbuser)
+            logging.info(f"New user added: {dbuser.id} - {dbuser.full_name}")
         await db.flush()
         return dbuser
 

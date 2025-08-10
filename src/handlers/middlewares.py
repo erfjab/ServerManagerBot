@@ -4,8 +4,6 @@ from eiogram.middleware import BaseMiddleware
 from eiogram.types import Update
 from src.db import GetDB, User, UserMessage
 
-logger = logging.getLogger(__name__)
-
 
 class Middleware(BaseMiddleware):
     def __init__(self, priority: int = 0):
@@ -23,7 +21,7 @@ class Middleware(BaseMiddleware):
             if update.message:
                 await UserMessage.add(update.message)
             if not dbuser.has_access:
-                logger.warning(f"User {dbuser.id} try to access admin panel")
+                logging.warning(f"User {dbuser.id} try to access admin panel")
                 return False
             data["dbuser"] = dbuser
             data["db"] = db

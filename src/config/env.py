@@ -20,4 +20,3 @@ SQLALCHEMY_DATABASE_URL = (
 ### Bot Settings
 TELEGRAM_API_TOKEN = config("TELEGRAM_API_TOKEN", default="", cast=str)
 TELEGRAM_ADMINS_ID = config("TELEGRAM_ADMINS_ID", cast=Csv(int)) or []
-TELEGRAM_LOGGER_GROUP_ID = config("TELEGRAM_LOGGER_GROUP_ID", default=0, cast=int)

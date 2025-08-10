@@ -1,5 +1,5 @@
 services:
-  holderbot:
+  servermanagerbot:
     image: ghcr.io/erfjab/servermanagerbot:latest
     restart: always
     env_file:
@@ -10,14 +10,15 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_DB: ${DB_NAME:-servermanager}
-      POSTGRES_USER: ${DB_USER:-servermanager}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-your_password_here}
+      POSTGRES_DB: ${DATABASE_NAME:-servermanager}
+      POSTGRES_USER: ${DATABASE_USERNAME:-servermanager}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-your_password_here}
+      PGPORT: ${DATABASE_PORT:-5432}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     network_mode: "host"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-servermanager}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-servermanager}"]
       interval: 10s
       timeout: 5s
       retries: 5

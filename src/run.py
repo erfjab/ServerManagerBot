@@ -46,7 +46,7 @@ async def main():
     if UVICORN_SSL_CERTFILE and UVICORN_SSL_KEYFILE:
         cfg.ssl_certfile = UVICORN_SSL_CERTFILE
         cfg.ssl_keyfile = UVICORN_SSL_KEYFILE
-    logger.info("Initializing bot...")
+    logger.info(f"Initializing bot... [{TELEGRAM_WEBHOOK_HOST}]")
     await BOT.set_webhook(
         url=f"{TELEGRAM_WEBHOOK_HOST}/api/telegram/webhook",
         secret_token=TELEGRAM_WEBHOOK_SECRET_KEY,

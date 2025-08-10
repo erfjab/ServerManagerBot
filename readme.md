@@ -29,15 +29,19 @@ mkdir -p /opt/erfjab/servermanagerbot/data
 curl -o /opt/erfjab/servermanagerbot/docker-compose.yml https://raw.githubusercontent.com/erfjab/servermanagerbot/master/docker-compose.yml
 cd /opt/erfjab/servermanagerbot
 curl -o .env https://raw.githubusercontent.com/erfjab/servermanagerbot/master/.env.example
+```
+
+#### 2. Config .env
+```bash
 nano .env
 ```
 
-#### 2. Pull Docker Image  
+#### 3. Pull Docker Image  
 ```bash
 docker compose pull
 ```
 
-#### 3. Start the Bot  
+#### 4. Start the Bot  
 ```bash
 docker compose up -d
 ```

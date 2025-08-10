@@ -5,7 +5,7 @@ from src.utils.state import DatabaseStorage
 
 
 async def main():
-    await BOT.delete_webhook(drop_pending_updates=True)
+    await BOT.delete_webhook()
     DP.storage = DatabaseStorage()
     DP.include_router(setup_handlers())
     await BOT.set_my_commands(

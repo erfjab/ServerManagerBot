@@ -38,8 +38,8 @@ class Buttons(StrEnum):
 
     ### Primary IPs
     PRIMARY_IPS = "🌐 Primary IPs"
-    PRIMARY_IPS_CREATE = "➕ Create Primary IP"
-    PRIMARY_IPS_ASSIGN = "🔗 Assign Primary IP"
+    PRIMARY_IPS_CREATE = "➕ Create IP"
+    PRIMARY_IPS_ASSIGN = "🔗 Assign IP"
     PRIMARY_IPS_UNASSIGN = "❌ Unassign Primary IP"
     PRIMARY_IPS_REMARK = "✏️ Change Remark"
     PRIMARY_IPS_DELETE = "🗑️ Delete Primary IP"

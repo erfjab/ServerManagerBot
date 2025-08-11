@@ -1,10 +1,10 @@
 import asyncio
 from eiogram import Router
-from eiogram.types import CallbackQuery
-from eiogram.filters import StateFilter
+from eiogram.types import CallbackQuery, Message
+from eiogram.filters import StateFilter, Text
 from eiogram.state import StateManager, State, StateGroup
 
-from src.db import AsyncSession
+from src.db import AsyncSession, UserMessage
 from src.keys import BotKB, BotCB, AreaType, TaskType, StepType
 from src.lang import Dialogs
 from src.utils.depends import GetHetzner
@@ -16,6 +16,7 @@ class ServerUpdateForm(StateGroup):
     approval = State()
     image = State()
     ip = State()
+    input = State()
 
 
 @router.callback_query(BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
@@ -79,6 +80,9 @@ async def servers_update(
             if not images:
                 return await callback_query.answer(text=Dialogs.SERVERS_SNAPSHOT_NOT_FOUND, show_alert=True)
             kb = BotKB.images_select(images=images, task=TaskType.UPDATE, target=int(callback_data.target))
+        case StepType.SERVERS_REMARK:
+            text = Dialogs.SERVERS_ENTER_REMARK
+            _state = ServerUpdateForm.input
         case _:
             return await callback_query.answer(text="Invalid step!", show_alert=True)
     await state.upsert_context(db=db, state=_state, step=callback_data.step, target=callback_data.target)
@@ -97,6 +101,22 @@ async def select_image_handler(
         text=Dialogs.ACTIONS_CONFIRM,
         reply_markup=BotKB.approval(area=AreaType.SERVER, task=TaskType.UPDATE),
     )
+
+
+@router.message(StateFilter(ServerUpdateForm.input), Text())
+async def input_handler(message: Message, state: StateManager, db: StateFilter, state_data: dict, hetzner: GetHetzner):
+    server = hetzner.servers.get_by_id(int(state_data["target"]))
+    if not server:
+        update = await message.answer(text=Dialogs.SERVERS_NOT_FOUND, reply_markup=BotKB.servers_back())
+        return await UserMessage.add(update)
+
+    match state_data["step"]:
+        case StepType.SERVERS_REMARK:
+            server.update(name=message.text)
+
+    await state.clear_state(db=db)
+    update = await message.answer(text=Dialogs.ACTIONS_SUCCESS, reply_markup=BotKB.servers_back(server.id))
+    return await UserMessage.clear(update)
 
 
 @router.callback_query(StateFilter(ServerUpdateForm.ip), BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))

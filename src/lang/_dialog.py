@@ -60,6 +60,9 @@ class Dialogs(StrEnum):
     SERVERS_ASSIGN_SELECT = "🌍 Select a primary IP to assign to the server:"
     SERVERS_ASSIGN_UNASSIGN_IPV4 = "🔗 First Unassign IPv4"
     SERVERS_ASSIGN_UNASSIGN_IPV6 = "🔗 First Unassign IPv6"
+    SERVERS_REMARK_VALIDATION = (
+        "<b>⚠️❌ Invalid remark format.</b>\n🔍 Please enter a valid remark without special characters and space."
+    )
 
     ### Snapshots
     SNAPSHOTS_MENU = "<b>📸 Snapshots Menu</b>\n👇 Select an action from the menu below."

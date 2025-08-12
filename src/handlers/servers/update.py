@@ -112,6 +112,9 @@ async def input_handler(message: Message, state: StateManager, db: StateFilter, 
 
     match state_data["step"]:
         case StepType.SERVERS_REMARK:
+            if len(message.text.split(" ")) > 1:
+                update = await message.answer(text=Dialogs.SERVERS_REMARK_VALIDATION)
+                return await UserMessage.add(update)
             server.update(name=message.text)
 
     await state.clear_state(db=db)

@@ -26,6 +26,9 @@ async def servers_create(callback_query: CallbackQuery, db: AsyncSession, state:
 
 @router.message(StateFilter(ServerCreateForm.remark), Text())
 async def remark_handler(message: Message, db: AsyncSession, state: StateManager, hetzner: GetHetzner):
+    if len(message.text.split(" ")) > 1:
+        update = await message.answer(text=Dialogs.SERVERS_REMARK_VALIDATION)
+        return await UserMessage.add(update)
     datacenters = hetzner.datacenters.get_all()
     if not datacenters:
         update = await message.answer(text=Dialogs.SERVERS_DATACENTERS_NOT_FOUND)

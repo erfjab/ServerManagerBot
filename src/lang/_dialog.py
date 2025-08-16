@@ -38,7 +38,13 @@ class Dialogs(StrEnum):
 <b>💿 Disk:</b> <code>{disk} GB</code>
 <b>📸 Snapshots:</b> <code>{snapshot}</code>
 <b>🖼️ Image:</b> <code>{image}</code>
-<b>📊 Traffic:</b> <code>{traffic} GB</code>
+<b>📊 Traffic:</b>
+ • In: <code>{traffic_in} GB</code>
+ • Out: <code>{traffic_out} GB</code>
+ • Total: <code>{traffic_total} GB</code>
+ • Included: <code>{traffic_included} GB</code>
+ • Used: <code>{traffic_used_percent}%</code>
+ • Billable: <code>{traffic_billable} GB</code>
 <b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]
 """
     SERVERS_REBUILD_CONFIRM = "<b>⚠️ Are you sure you want to rebuild the server?</b>\n🧹 This action will erase all data on the server.\n🖼️ Please select an image to proceed."

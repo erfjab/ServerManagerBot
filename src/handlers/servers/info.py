@@ -18,12 +18,18 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
     if not server:
         return await callback_query.message.edit(text=Dialogs.SERVERS_NOT_FOUND)
 
+    ingoing_gb = round(((server.ingoing_traffic or 0) / 1024**3), 3)
+    outgoing_gb = round(((server.outgoing_traffic or 0) / 1024**3), 3)
+    total_gb = round(ingoing_gb + outgoing_gb, 3)
+    included_gb = round(((getattr(server, "included_traffic", 0) or 0) / 1024**3), 3)
+    used_percent = round((total_gb / included_gb * 100), 1) if included_gb else None
+
     update = await callback_query.message.edit(
         text=Dialogs.SERVERS_INFO.format(
             name=server.name,
             status=server.status,
-            ipv4=server.public_net.ipv4.ip if server.public_net.ipv4 else "NO IPV4",
-            ipv6=server.public_net.ipv6.ip if server.public_net.ipv6 else "NO IPV6",
+            ipv4=server.public_net.ipv4.ip if server.public_net.ipv4 else "➖",
+            ipv6=server.public_net.ipv6.ip if server.public_net.ipv6 else "➖",
             ram=server.server_type.memory,
             cpu=server.server_type.cores,
             created=server.created.strftime("%Y-%m-%d"),
@@ -39,10 +45,12 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
                     if snapshot.created_from and snapshot.created_from.id == server.id
                 ]
             ),
-            traffic=round(
-                ((server.ingoing_traffic or 0) + (server.outgoing_traffic or 0)) / 1024**3,
-                3,
-            ),
+            traffic_in=ingoing_gb,
+            traffic_out=outgoing_gb,
+            traffic_total=total_gb,
+            traffic_included=included_gb,
+            traffic_used_percent=(used_percent if used_percent is not None else "➖"),
+            traffic_billable=round(max(total_gb - included_gb, 0), 3) if included_gb else 0,
         ),
         reply_markup=BotKB.servers_update(server=server),
     )

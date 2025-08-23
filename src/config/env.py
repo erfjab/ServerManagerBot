@@ -22,5 +22,5 @@ TELEGRAM_API_TOKEN = config("TELEGRAM_API_TOKEN", default="", cast=str)
 TELEGRAM_ADMINS_ID = config("TELEGRAM_ADMINS_ID", cast=Csv(int)) or []
 
 ### Traffic Monitor Settings
-TRAFFIC_MONITOR_ENABLED = config("TRAFFIC_MONITOR_ENABLED", default=True, cast=bool)
+TRAFFIC_MONITOR_ENABLED = config("TRAFFIC_MONITOR_ENABLED", default=False, cast=bool)
 TRAFFIC_MONITOR_ALERT_PERCENT = config("TRAFFIC_MONITOR_ALERT_PERCENT", default=80, cast=int)

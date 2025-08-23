@@ -15,4 +15,5 @@ dependencies = [
     "python-decouple==3.8",
     "eiogram==2.0.1",
     "hcloud==2.5.4",
+    "apscheduler>=3.11.0",
 ]

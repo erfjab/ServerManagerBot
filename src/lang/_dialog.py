@@ -107,3 +107,13 @@ class Dialogs(StrEnum):
     PRIMARY_IPS_CREATE_SUCCESS = "<b>🎉✅ Primary IP created successfully.</b>"
     PRIMARY_IPS_NO_DATACENTERS = "🔍❌ No datacenters found."
     PRIMARY_IPS_SELECT_DATACENTER = "🌍 Select a datacenter for the primary IP:"
+
+    ### Traffic Monitor
+    TRAFFIC_ALERT = (
+        "<b>⚠️ Traffic Alert</b>\n"
+        "<b>Client:</b> <code>{client}</code>\n"
+        "<b>Server:</b> <code>{server_name}</code> [<code>{server_id}</code>]\n"
+        "<b>Outgoing:</b> <code>{out} GB</code> <b>of</b> <code>{included} GB</code>\n"
+        "<b>Used:</b> <code>{percent}%</code>\n"
+        "<b>Billable:</b> <code>{billable} GB</code>"
+    )

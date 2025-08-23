@@ -43,7 +43,7 @@ class Dialogs(StrEnum):
  • Out: <code>{traffic_out} GB</code>
  • Total: <code>{traffic_total} GB</code>
  • Included: <code>{traffic_included} GB</code>
- • Used: <code>{traffic_used_percent}%</code>
+ • Used: <code>{traffic_used_percent}% [In/Included traffic]</code>
  • Billable: <code>{traffic_billable} GB</code>
 <b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]
 """

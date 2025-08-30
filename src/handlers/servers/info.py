@@ -22,7 +22,7 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
     outgoing_gb = round(((server.outgoing_traffic or 0) / 1024**3), 3)
     total_gb = round(ingoing_gb + outgoing_gb, 3)
     included_gb = round(((getattr(server, "included_traffic", 0) or 0) / 1024**3), 3)
-    used_percent = round((ingoing_gb / included_gb * 100), 1) if included_gb else None
+    used_percent = round((outgoing_gb / included_gb * 100), 1) if included_gb else None
 
     update = await callback_query.message.edit(
         text=Dialogs.SERVERS_INFO.format(

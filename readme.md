@@ -35,8 +35,17 @@ curl -o .env https://raw.githubusercontent.com/erfjab/servermanagerbot/master/.e
 ```
 
 #### 2. Config .env
+
+You can set the database values as you like, but make sure to also add the same values inside the `docker-compose.yml` file to ensure your `database` is properly configured.
+
 ```bash
 nano .env
+```
+
+Then edit your `docker-compose.yml` file as well:
+
+```bash
+nano docker-compose.yml
 ```
 
 #### 3. Pull Docker Image  

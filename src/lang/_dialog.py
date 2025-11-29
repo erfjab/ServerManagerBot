@@ -72,6 +72,10 @@ class Dialogs(StrEnum):
     SERVERS_REMARK_VALIDATION = (
         "<b>⚠️❌ Invalid remark format.</b>\n🔍 Please enter a valid remark without special characters and space."
     )
+    SERVERS_UPGRADE_SELECT = "⬆️ Select a plan to upgrade the server:\n\n<b>Current:</b> <code>{current_plan}</code>"
+    SERVERS_UPGRADE_NOT_FOUND = "🔍❌ No upgrade plans available for this server."
+    SERVERS_UPGRADE_SUCCESS = "<b>🎉✅ Server upgraded successfully.</b>"
+    SERVERS_SHOULD_BE_OFF = "⚠️❌ Please power off the server and try again."
 
     ### Snapshots
     SNAPSHOTS_MENU = "<b>📸 Snapshots Menu</b>\n👇 Select an action from the menu below."

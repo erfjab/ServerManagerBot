@@ -28,8 +28,8 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
     price_hourly = "➖"
     price_monthly = "➖"
     if prices:
-        price_hourly = prices[0]["price_hourly"]["gross"]
-        price_monthly = prices[0]["price_monthly"]["gross"]
+        price_hourly = f"{float(prices[0]['price_hourly']['gross']):.4f}"
+        price_monthly = f"{float(prices[0]['price_monthly']['gross']):.2f}"
 
     update = await callback_query.message.edit(
         text=Dialogs.SERVERS_INFO.format(

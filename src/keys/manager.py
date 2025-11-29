@@ -191,6 +191,13 @@ class BotKB:
                 ).pack(),
             )
         kb.adjust(1, 1, 2, 1, 2, 1, 2, 1, 2, 2)
+        kb.row(
+            InlineKeyboardButton(
+                text=Buttons.SERVERS_REFRESH,
+                callback_data=BotCB(area=AreaType.SERVER, task=TaskType.INFO, target=server.id).pack(),
+            ),
+            size=1,
+        )
         cls._back(kb=kb, area=AreaType.SERVER)
         return kb.as_markup()
 

@@ -36,6 +36,7 @@ class StepType(StrEnum):
     SERVERS_UNASSIGN_IPV6 = "sua6"
     SERVERS_ASSIGN_IPV4 = "saa4"
     SERVERS_ASSIGN_IPV6 = "saa6"
+    SERVERS_UPGRADE = "sup"
     SNAPSHOTS_RESTORE = "srs"
     SNAPSHOTS_DELETE = "sds"
     SNAPSHOTS_REMARK = "srm"

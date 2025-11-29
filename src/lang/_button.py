@@ -32,6 +32,7 @@ class Buttons(StrEnum):
     SERVERS_ASSIGN_IPV6 = "🔗 Assign IPv6"
     SERVERS_UNASSIGN_IPV4 = "❌ Unassign IPv4"
     SERVERS_UNASSIGN_IPV6 = "❌ Unassign IPv6"
+    SERVERS_UPGRADE = "⬆️ Upgrade"
 
     ### Snapshots
     SNAPSHOTS = "📸 Snapshots"

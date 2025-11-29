@@ -17,6 +17,7 @@ class ServerUpdateForm(StateGroup):
     image = State()
     ip = State()
     input = State()
+    upgrade = State()
 
 
 @router.callback_query(BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
@@ -83,6 +84,24 @@ async def servers_update(
         case StepType.SERVERS_REMARK:
             text = Dialogs.SERVERS_ENTER_REMARK
             _state = ServerUpdateForm.input
+        case StepType.SERVERS_UPGRADE:
+            server_types = hetzner.server_types.get_all()
+            current_type = server.server_type
+            upgrade_plans = [
+                st
+                for st in server_types
+                if st.architecture == current_type.architecture
+                and st.id != current_type.id
+                and (st.memory >= current_type.memory or st.cores >= current_type.cores or st.disk >= current_type.disk)
+            ]
+            if not upgrade_plans:
+                return await callback_query.answer(text=Dialogs.SERVERS_UPGRADE_NOT_FOUND, show_alert=True)
+            upgrade_plans.sort(key=lambda x: (x.memory, x.cores, x.disk))
+            text = Dialogs.SERVERS_UPGRADE_SELECT.format(
+                current_plan=f"{current_type.name} [{current_type.memory}GB RAM, {current_type.cores} CPU, {current_type.disk}GB Disk]"
+            )
+            _state = ServerUpdateForm.upgrade
+            kb = BotKB.upgrade_plans_select(plans=upgrade_plans, server_id=server.id)
         case _:
             return await callback_query.answer(text="Invalid step!", show_alert=True)
     await state.upsert_context(db=db, state=_state, step=callback_data.step, target=callback_data.target)
@@ -146,6 +165,30 @@ async def select_ip_handler(
     await asyncio.sleep(2)
     await state.clear_state(db=db)
     return await callback_query.message.edit(text=Dialogs.ACTIONS_SUCCESS, reply_markup=BotKB.servers_back(server.id))
+
+
+@router.callback_query(StateFilter(ServerUpdateForm.upgrade), BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))
+async def select_upgrade_handler(
+    callback_query: CallbackQuery,
+    callback_data: BotCB,
+    db: AsyncSession,
+    state: StateManager,
+    hetzner: GetHetzner,
+    state_data: dict,
+):
+    server_type = hetzner.server_types.get_by_id(int(callback_data.target))
+    if not server_type:
+        return await callback_query.answer(text=Dialogs.SERVERS_UPGRADE_NOT_FOUND, show_alert=True)
+    server = hetzner.servers.get_by_id(int(state_data["target"]))
+    if not server:
+        return await callback_query.answer(text=Dialogs.SERVERS_NOT_FOUND, show_alert=True)
+
+    if server.status != "off":
+        return await callback_query.answer(text=Dialogs.SERVERS_SHOULD_BE_OFF, show_alert=True)
+    await callback_query.message.edit(text=Dialogs.ACTIONS_WAITING)
+    server.change_type(server_type=server_type, upgrade_disk=True)
+    await state.clear_state(db=db)
+    return await callback_query.message.edit(text=Dialogs.SERVERS_UPGRADE_SUCCESS, reply_markup=BotKB.servers_back(server.id))
 
 
 @router.callback_query(StateFilter(ServerUpdateForm.approval), BotCB.filter(area=AreaType.SERVER, task=TaskType.UPDATE))

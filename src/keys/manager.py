@@ -165,6 +165,7 @@ class BotKB:
         kb = InlineKeyboardBuilder()
         update = {
             StepType.SERVERS_REMARK: Buttons.SERVERS_REMARK,
+            StepType.SERVERS_UPGRADE: Buttons.SERVERS_UPGRADE,
             StepType.SERVERS_POWER_OFF: Buttons.SERVERS_POWER_OFF,
             StepType.SERVERS_POWER_ON: Buttons.SERVERS_POWER_ON,
             StepType.SERVERS_CREATE_SNAPSHOT: Buttons.SERVERS_CREATE_SNAPSHOT,
@@ -189,7 +190,7 @@ class BotKB:
                     step=step,
                 ).pack(),
             )
-        kb.adjust(1, 2, 1, 2, 1, 2, 1, 2, 2)
+        kb.adjust(1, 1, 2, 1, 2, 1, 2, 1, 2, 2)
         cls._back(kb=kb, area=AreaType.SERVER)
         return kb.as_markup()
 
@@ -245,6 +246,22 @@ class BotKB:
             )
         kb.adjust(1)
         cls._back(kb=kb, area=AreaType.SERVER)
+        return kb.as_markup()
+
+    @classmethod
+    def upgrade_plans_select(cls, plans: List[ServerType], server_id: int) -> InlineKeyboardMarkup:
+        kb = InlineKeyboardBuilder()
+        for plan in plans:
+            kb.add(
+                text=f"{plan.name} [{plan.memory} RAM, {plan.cores} CPU, {float(plan.prices[0]['price_monthly']['net'])} EUR]",
+                callback_data=BotCB(
+                    area=AreaType.SERVER,
+                    task=TaskType.UPDATE,
+                    target=plan.id,
+                ).pack(),
+            )
+        kb.adjust(1)
+        cls._back(kb=kb, area=AreaType.SERVER, target=server_id)
         return kb.as_markup()
 
     @classmethod

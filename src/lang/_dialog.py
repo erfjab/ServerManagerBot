@@ -23,7 +23,7 @@ class Dialogs(StrEnum):
     CLIENTS_NOT_FOUND = "<b>🔍❌ Client not found.</b>"
     CLIENTS_CREATION_SUCCESS = "<b>🎉✅ Client created successfully.</b>\n⚙️ You can now manage the client."
     CLIENTS_INVALID_TOKEN = "<b>⚠️❌ Invalid client secret [api key].</b>\n🔍 Please check the token and try again."
-    CLIENTS_INFO = "<b>👤 Client Setting</b>"
+    CLIENTS_INFO = "<b>👤 Client Setting</b>\n\n🔑 <b>API Key:</b> <tg-spoiler>{secret}</tg-spoiler>"
 
     ### Servers
     SERVERS_MENU = "<b>🖥️ Servers Menu</b>\n👇 Select an action from the menu below."

@@ -24,6 +24,13 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
     included_gb = round(((getattr(server, "included_traffic", 0) or 0) / 1024**3), 3)
     used_percent = round((outgoing_gb / included_gb * 100), 1) if included_gb else None
 
+    prices = server.server_type.prices
+    price_hourly = "➖"
+    price_monthly = "➖"
+    if prices:
+        price_hourly = prices[0]["price_hourly"]["gross"]
+        price_monthly = prices[0]["price_monthly"]["gross"]
+
     update = await callback_query.message.edit(
         text=Dialogs.SERVERS_INFO.format(
             name=server.name,
@@ -51,6 +58,8 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
             traffic_included=included_gb,
             traffic_used_percent=(used_percent if used_percent is not None else "➖"),
             traffic_billable=round(max(total_gb - included_gb, 0), 3) if included_gb else 0,
+            price_hourly=price_hourly,
+            price_monthly=price_monthly,
         ),
         reply_markup=BotKB.servers_update(server=server),
     )

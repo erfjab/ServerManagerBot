@@ -16,7 +16,7 @@ async def clients_info(callback_query: CallbackQuery, db: AsyncSession, state_da
     if not client:
         return await callback_query.answer(text=Dialogs.CLIENTS_NOT_FOUND, show_alert=True)
     update = await callback_query.message.edit(
-        text=Dialogs.CLIENTS_INFO,
+        text=Dialogs.CLIENTS_INFO.format(secret=client.secret),
         reply_markup=BotKB.clients_update(client.id),
     )
     return await UserMessage.clear(update, keep_current=True)

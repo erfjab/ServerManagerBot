@@ -46,8 +46,8 @@ class Dialogs(StrEnum):
  • Used: <code>{traffic_used_percent}% [Out/Included traffic]</code>
  • Billable: <code>{traffic_billable} GB</code>
 <b>💰 Price:</b>
- • Hourly: <code>{price_hourly} €</code>
- • Monthly: <code>{price_monthly} €</code>
+ • Hourly: <code>{price_hourly}</code>
+ • Monthly: <code>{price_monthly}</code>
 <b>📅 Created:</b> <code>{created}</code> [<code>{created_day} days ago</code>]
 """
     SERVERS_REBUILD_CONFIRM = "<b>⚠️ Are you sure you want to rebuild the server?</b>\n🧹 This action will erase all data on the server.\n🖼️ Please select an image to proceed."

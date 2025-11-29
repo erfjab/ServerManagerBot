@@ -16,4 +16,5 @@ dependencies = [
     "eiogram==2.0.1",
     "hcloud==2.5.4",
     "apscheduler>=3.11.0",
+    "aiohttp>=3.13.2",
 ]

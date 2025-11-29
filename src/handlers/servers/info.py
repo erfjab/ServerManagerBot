@@ -8,6 +8,7 @@ from src.db import UserMessage
 from src.lang import Dialogs
 from src.keys import BotKB, BotCB, AreaType, TaskType
 from src.utils.depends import GetHetzner, ClearState
+from src.utils.euro import get_euro
 
 router = Router()
 
@@ -28,8 +29,15 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
     price_hourly = "➖"
     price_monthly = "➖"
     if prices:
-        price_hourly = f"{float(prices[0]['price_hourly']['gross']):.4f}"
-        price_monthly = f"{float(prices[0]['price_monthly']['gross']):.2f}"
+        hourly = float(prices[0]["price_hourly"]["gross"])
+        monthly = float(prices[0]["price_monthly"]["gross"])
+        try:
+            euro_rate = await get_euro()
+            price_hourly = f"{hourly:.4f}€ [{hourly * euro_rate:,.0f}T]"
+            price_monthly = f"{monthly:.2f}€ [{monthly * euro_rate:,.0f}T]"
+        except Exception:
+            price_hourly = f"{hourly:.4f}€"
+            price_monthly = f"{monthly:.2f}€"
 
     update = await callback_query.message.edit(
         text=Dialogs.SERVERS_INFO.format(

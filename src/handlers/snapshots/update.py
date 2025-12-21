@@ -6,7 +6,7 @@ from eiogram.state import StateManager, State, StateGroup
 from src.db import AsyncSession
 from src.keys import BotKB, BotCB, AreaType, TaskType, StepType
 from src.lang import Dialogs
-from src.utils.depends import GetHetzner
+from src.utils.depends import GetHetzner, ShouldBeOwner
 
 router = Router()
 
@@ -24,6 +24,7 @@ async def snapshots_update(
     db: AsyncSession,
     state: StateManager,
     hetzner: GetHetzner,
+    __: ShouldBeOwner,
 ):
     kb = BotKB.snapshots_back(id=callback_data.target)
     snapshot = hetzner.images.get_by_id(int(callback_data.target))
@@ -50,6 +51,7 @@ async def input_handler(
     state: StateManager,
     hetzner: GetHetzner,
     state_data: dict,
+    __: ShouldBeOwner,
 ):
     snapshot = hetzner.images.get_by_id(int(state_data["target"]))
     if not snapshot:
@@ -73,6 +75,7 @@ async def approval_handler(
     state: StateManager,
     hetzner: GetHetzner,
     state_data: dict,
+    __: ShouldBeOwner,
 ):
     if not callback_data.is_approve:
         return await callback_query.message.edit(text=Dialogs.ACTIONS_CANCELLED, reply_markup=BotKB.snapshots_back())

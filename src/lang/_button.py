@@ -34,6 +34,9 @@ class Buttons(StrEnum):
     SERVERS_UNASSIGN_IPV6 = "❌ Unassign IPv6"
     SERVERS_UPGRADE = "⬆️ Upgrade"
     SERVERS_REFRESH = "🔄 Refresh"
+    SERVERS_ACCESS_GRANT = "➕ Grant Access"
+    SERVERS_ACCESS_LIST = "📋 List Access"
+    SERVERS_ACCESS_REVOKE = "❌ Revoke Access"
 
     ### Snapshots
     SNAPSHOTS = "📸 Snapshots"

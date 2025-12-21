@@ -7,13 +7,15 @@ from eiogram.filters import IgnoreStateFilter
 from src.db import UserMessage
 from src.lang import Dialogs
 from src.keys import BotCB, BotKB, AreaType, TaskType
-from src.utils.depends import GetHetzner, ClearState
+from src.utils.depends import GetHetzner, ClearState, ShouldBeOwner
 
 router = Router()
 
 
 @router.callback_query(BotCB.filter(area=AreaType.PRIMARY_IP, task=TaskType.INFO), IgnoreStateFilter())
-async def primary_ips_info(callback_query: CallbackQuery, callback_data: BotCB, hetzner: GetHetzner, _: ClearState):
+async def primary_ips_info(
+    callback_query: CallbackQuery, callback_data: BotCB, hetzner: GetHetzner, _: ClearState, __: ShouldBeOwner
+):
     primary_ip = hetzner.primary_ips.get_by_id(int(callback_data.target))
     if not primary_ip:
         return await callback_query.message.edit(text=Dialogs.PRIMARY_IPS_NOT_FOUND)

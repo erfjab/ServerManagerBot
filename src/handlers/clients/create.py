@@ -9,6 +9,7 @@ from hcloud import Client as HCloudClient
 from src.db import AsyncSession, Client, UserMessage
 from src.keys import BotKB, BotCB, AreaType, TaskType
 from src.lang import Dialogs
+from src.utils.depends import ShouldBeOwner
 
 router = Router()
 
@@ -19,13 +20,13 @@ class ClientCreateForm(StateGroup):
 
 
 @router.callback_query(BotCB.filter(area=AreaType.CLIENT, task=TaskType.CREATE), IgnoreStateFilter())
-async def clients_create(callback_query: CallbackQuery, db: AsyncSession, state: StateManager):
+async def clients_create(callback_query: CallbackQuery, db: AsyncSession, state: StateManager, __: ShouldBeOwner):
     await state.upsert_context(db=db, state=ClientCreateForm.remark)
     return await callback_query.message.edit(text=Dialogs.CLIENTS_ENTER_REMARK, reply_markup=BotKB.home_back())
 
 
 @router.message(StateFilter(ClientCreateForm.remark), Text())
-async def remark_handler(message: Message, db: AsyncSession, state: StateManager):
+async def remark_handler(message: Message, db: AsyncSession, state: StateManager, __: ShouldBeOwner):
     if await Client.get_by_remark(db, message.text):
         update = await message.answer(text=Dialogs.ACTIONS_DUPLICATE, reply_markup=BotKB.home_back())
         return await UserMessage.clear(update)
@@ -35,7 +36,7 @@ async def remark_handler(message: Message, db: AsyncSession, state: StateManager
 
 
 @router.message(StateFilter(ClientCreateForm.secret), Text())
-async def secret_handler(message: Message, db: AsyncSession, state: StateManager, state_data: dict):
+async def secret_handler(message: Message, db: AsyncSession, state: StateManager, state_data: dict, __: ShouldBeOwner):
     try:
         hetzner = HCloudClient(token=message.text)
         hetzner.datacenters.get_all()

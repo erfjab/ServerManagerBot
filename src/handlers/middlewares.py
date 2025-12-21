@@ -1,4 +1,3 @@
-import logging
 from typing import Any, Callable, Dict, Awaitable
 from eiogram.middleware import BaseMiddleware
 from eiogram.types import Update
@@ -20,9 +19,11 @@ class Middleware(BaseMiddleware):
             dbuser = await User.upsert(db, user=user)
             if update.message:
                 await UserMessage.add(update.message)
-            if not dbuser.has_access:
-                logging.warning(f"User {dbuser.id} try to access admin panel")
-                return False
             data["dbuser"] = dbuser
             data["db"] = db
-            return await handler(update, data)
+            try:
+                return await handler(update, data)
+            except Exception as e:
+                if e == "Access Denied":
+                    return
+                raise e

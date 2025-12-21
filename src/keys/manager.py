@@ -28,7 +28,7 @@ class BotKB:
         )
 
     @classmethod
-    def home(cls, *, clients: List[Client]) -> InlineKeyboardMarkup:
+    def home(cls, *, clients: List[Client], is_owner: bool = False) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         for client in clients:
             kb.add(
@@ -36,12 +36,13 @@ class BotKB:
                 callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.MENU, target=client.id).pack(),
             )
         kb.adjust(2)
-        kb.row(
-            InlineKeyboardButton(
-                text=Buttons.CLIENTS_CREATE, callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.CREATE).pack()
-            ),
-            size=1,
-        )
+        if is_owner:
+            kb.row(
+                InlineKeyboardButton(
+                    text=Buttons.CLIENTS_CREATE, callback_data=BotCB(area=AreaType.CLIENT, task=TaskType.CREATE).pack()
+                ),
+                size=1,
+            )
         kb.row(InlineKeyboardButton(text=Buttons.OWNER, url="https://t.me/erfjabs"), size=1)
         return kb.as_markup()
 
@@ -161,25 +162,35 @@ class BotKB:
         return kb.as_markup()
 
     @classmethod
-    def servers_update(cls, server: Server) -> InlineKeyboardMarkup:
+    def servers_update(cls, server: Server, is_owner: bool = False) -> InlineKeyboardMarkup:
         kb = InlineKeyboardBuilder()
         update = {
             StepType.SERVERS_REMARK: Buttons.SERVERS_REMARK,
-            StepType.SERVERS_UPGRADE: Buttons.SERVERS_UPGRADE,
             StepType.SERVERS_POWER_OFF: Buttons.SERVERS_POWER_OFF,
             StepType.SERVERS_POWER_ON: Buttons.SERVERS_POWER_ON,
-            StepType.SERVERS_CREATE_SNAPSHOT: Buttons.SERVERS_CREATE_SNAPSHOT,
             StepType.SERVERS_REBOOT: Buttons.SERVERS_REBOOT,
             StepType.SERVERS_REBUILD: Buttons.SERVERS_REBUILD,
-            StepType.SERVERS_DEL_SNAPSHOT: Buttons.SERVERS_DEL_SNAPSHOT,
             StepType.SERVERS_RESET_PASSWORD: Buttons.SERVERS_RESET_PASSWORD,
             StepType.SERVERS_RESET: Buttons.SERVERS_RESET,
-            StepType.SERVERS_REMOVE: Buttons.SERVERS_REMOVE,
-            StepType.SERVERS_UNASSIGN_IPV4: Buttons.SERVERS_UNASSIGN_IPV4,
-            StepType.SERVERS_UNASSIGN_IPV6: Buttons.SERVERS_UNASSIGN_IPV6,
-            StepType.SERVERS_ASSIGN_IPV4: Buttons.SERVERS_ASSIGN_IPV4,
-            StepType.SERVERS_ASSIGN_IPV6: Buttons.SERVERS_ASSIGN_IPV6,
         }
+
+        if is_owner:
+            update.update(
+                {
+                    StepType.SERVERS_CREATE_SNAPSHOT: Buttons.SERVERS_CREATE_SNAPSHOT,
+                    StepType.SERVERS_UPGRADE: Buttons.SERVERS_UPGRADE,
+                    StepType.SERVERS_DEL_SNAPSHOT: Buttons.SERVERS_DEL_SNAPSHOT,
+                    StepType.SERVERS_UNASSIGN_IPV4: Buttons.SERVERS_UNASSIGN_IPV4,
+                    StepType.SERVERS_UNASSIGN_IPV6: Buttons.SERVERS_UNASSIGN_IPV6,
+                    StepType.SERVERS_ASSIGN_IPV4: Buttons.SERVERS_ASSIGN_IPV4,
+                    StepType.SERVERS_ASSIGN_IPV6: Buttons.SERVERS_ASSIGN_IPV6,
+                    StepType.SERVERS_ACCESS_GRANT: Buttons.SERVERS_ACCESS_GRANT,
+                    StepType.SERVERS_ACCESS_LIST: Buttons.SERVERS_ACCESS_LIST,
+                    StepType.SERVERS_ACCESS_REVOKE: Buttons.SERVERS_ACCESS_REVOKE,
+                    StepType.SERVERS_REMOVE: Buttons.SERVERS_REMOVE,
+                }
+            )
+
         for step, button in update.items():
             kb.add(
                 text=button,
@@ -190,7 +201,7 @@ class BotKB:
                     step=step,
                 ).pack(),
             )
-        kb.adjust(1, 1, 2, 1, 2, 1, 2, 1, 2, 2)
+        kb.adjust(2)
         kb.row(
             InlineKeyboardButton(
                 text=Buttons.SERVERS_REFRESH,

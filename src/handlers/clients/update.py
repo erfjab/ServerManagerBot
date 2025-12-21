@@ -7,6 +7,7 @@ from hcloud import Client as HCloudClient
 from src.db import AsyncSession, Client, UserMessage
 from src.keys import BotKB, BotCB, AreaType, TaskType, StepType
 from src.lang import Dialogs
+from src.utils.depends import ShouldBeOwner
 
 router = Router()
 
@@ -18,7 +19,12 @@ class ClientUpdateForm(StateGroup):
 
 @router.callback_query(BotCB.filter(area=AreaType.CLIENT, task=TaskType.UPDATE))
 async def clients_update(
-    callback_query: CallbackQuery, callback_data: BotCB, db: AsyncSession, state: StateManager, state_data: dict
+    callback_query: CallbackQuery,
+    callback_data: BotCB,
+    db: AsyncSession,
+    state: StateManager,
+    state_data: dict,
+    __: ShouldBeOwner,
 ):
     kb = BotKB.clients_back(id=state_data["client_id"])
     match callback_data.step:
@@ -39,7 +45,7 @@ async def clients_update(
 
 
 @router.message(StateFilter(ClientUpdateForm.input), Text())
-async def input_handler(message: Message, db: AsyncSession, state: StateManager, state_data: dict):
+async def input_handler(message: Message, db: AsyncSession, state: StateManager, state_data: dict, __: ShouldBeOwner):
     client = await Client.get_by_id(db, state_data["client_id"])
     if not client:
         update = await message.answer(text=Dialogs.CLIENTS_NOT_FOUND, reply_markup=BotKB.home_back())
@@ -67,7 +73,12 @@ async def input_handler(message: Message, db: AsyncSession, state: StateManager,
 
 @router.callback_query(StateFilter(ClientUpdateForm.approval), BotCB.filter(area=AreaType.CLIENT, task=TaskType.UPDATE))
 async def approval_handler(
-    callback_query: CallbackQuery, callback_data: BotCB, db: AsyncSession, state: StateManager, state_data: dict
+    callback_query: CallbackQuery,
+    callback_data: BotCB,
+    db: AsyncSession,
+    state: StateManager,
+    state_data: dict,
+    __: ShouldBeOwner,
 ):
     client = await Client.get_by_id(db, state_data["client_id"])
     if not client:

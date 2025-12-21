@@ -3,10 +3,7 @@ from enum import StrEnum
 
 class Dialogs(StrEnum):
     ### Commands
-    COMMAND_START = """
-<b>🌟 Welcome! I'm your Server Management Assistant</b>
-💝 <a href="https://t.me/PingiHost">Project Sponsor: PingiHost</a>
-"""
+    COMMAND_START = "<b>🌟 Welcome! I'm your Server Management Assistant</b>"
 
     ### Actions
     ACTIONS_SUCCESS = "<b>🎉✅ Action completed successfully.</b>"
@@ -28,6 +25,13 @@ class Dialogs(StrEnum):
     ### Servers
     SERVERS_MENU = "<b>🖥️ Servers Menu</b>\n👇 Select an action from the menu below."
     SERVERS_NOT_FOUND = "🔍❌ Not found server."
+    SERVERS_ACCESS_GRANT_PROMPT = "✏️ Enter the Chat ID to grant access:"
+    SERVERS_ACCESS_REVOKE_PROMPT = "✏️ Enter the Chat ID to revoke access:"
+    SERVERS_ACCESS_LIST = "<b>📋 Access List:</b>\n{list}"
+    SERVERS_ACCESS_GRANTED = "<b>🎉✅ Access granted to {chat_id}.</b>"
+    SERVERS_ACCESS_REVOKED = "<b>🎉✅ Access revoked from {chat_id}.</b>"
+    SERVERS_ACCESS_ALREADY_EXISTS = "<b>⚠️❌ Access already exists for {chat_id}.</b>"
+    SERVERS_ACCESS_NOT_FOUND = "<b>⚠️❌ Access not found for {chat_id}.</b>"
     SERVERS_INFO = """
 <b>🚀 Name:</b> <code>{name}</code> [<code>{status}</code>]
 <b>🔗 IPV4:</b> <code>{ipv4}</code>

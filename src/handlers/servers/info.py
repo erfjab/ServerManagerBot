@@ -4,21 +4,33 @@ from eiogram import Router
 from eiogram.types import CallbackQuery
 from eiogram.filters import IgnoreStateFilter
 
-from src.db import UserMessage
-from src.lang import Dialogs
+from src.db import UserMessage, User
 from src.keys import BotKB, BotCB, AreaType, TaskType
 from src.utils.depends import GetHetzner, ClearState
 from src.utils.euro import get_euro
+from src.lang import Dialogs
+
 
 router = Router()
 
 
 @router.callback_query(BotCB.filter(area=AreaType.SERVER, task=TaskType.INFO), IgnoreStateFilter())
-async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetzner: GetHetzner, _: ClearState):
-    server = hetzner.servers.get_by_id(int(callback_data.target))
+async def servers_info(
+    callback_query: CallbackQuery,
+    callback_data: BotCB,
+    hetzner: GetHetzner,
+    _: ClearState,
+    dbuser: User,
+    state_data: dict,
+):
+    server_id = int(callback_data.target)
+    if not dbuser.is_owner:
+        if server_id not in dbuser.get_server_ids(int(state_data.get("client_id"))):
+            return await callback_query.answer("Access Denied", show_alert=True)
+
+    server = hetzner.servers.get_by_id(server_id)
     if not server:
         return await callback_query.message.edit(text=Dialogs.SERVERS_NOT_FOUND)
-
     ingoing_gb = round(((server.ingoing_traffic or 0) / 1024**3), 3)
     outgoing_gb = round(((server.outgoing_traffic or 0) / 1024**3), 3)
     total_gb = round(ingoing_gb + outgoing_gb, 3)
@@ -68,10 +80,10 @@ async def servers_info(callback_query: CallbackQuery, callback_data: BotCB, hetz
         price_hourly=price_hourly,
         price_monthly=price_monthly,
     )
-    reply_markup = BotKB.servers_update(server=server)
-
     try:
-        update = await callback_query.message.edit(text=text, reply_markup=reply_markup)
+        update = await callback_query.message.edit(
+            text=text, reply_markup=BotKB.servers_update(server=server, is_owner=dbuser.is_owner)
+        )
     except Exception:
         await callback_query.answer()
         return

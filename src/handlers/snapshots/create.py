@@ -6,7 +6,7 @@ from eiogram.state import StateManager, State, StateGroup
 from src.db import AsyncSession, UserMessage
 from src.keys import BotKB, BotCB, AreaType, TaskType
 from src.lang import Dialogs
-from src.utils.depends import GetHetzner
+from src.utils.depends import GetHetzner, ShouldBeOwner
 
 router = Router()
 
@@ -17,7 +17,9 @@ class SnapshotCreateForm(StateGroup):
 
 
 @router.callback_query(BotCB.filter(area=AreaType.SNAPSHOT, task=TaskType.CREATE))
-async def snapshots_create(callback_query: CallbackQuery, db: AsyncSession, state: StateManager, hetzner: GetHetzner):
+async def snapshots_create(
+    callback_query: CallbackQuery, db: AsyncSession, state: StateManager, hetzner: GetHetzner, __: ShouldBeOwner
+):
     servers = hetzner.servers.get_all()
     if not servers:
         return await callback_query.answer(text=Dialogs.SNAPSHOTS_SERVERS_NOT_FOUND, show_alert=True)
@@ -26,7 +28,7 @@ async def snapshots_create(callback_query: CallbackQuery, db: AsyncSession, stat
 
 
 @router.message(StateFilter(SnapshotCreateForm.remark), Text())
-async def remark_handler(message: Message, db: AsyncSession, state: StateManager, hetzner: GetHetzner):
+async def remark_handler(message: Message, db: AsyncSession, state: StateManager, hetzner: GetHetzner, __: ShouldBeOwner):
     servers = hetzner.servers.get_all()
     if not servers:
         update = await message.answer(text=Dialogs.SNAPSHOTS_SERVERS_NOT_FOUND)
@@ -47,6 +49,7 @@ async def server_handler(
     state: StateManager,
     hetzner: GetHetzner,
     state_data: dict,
+    __: ShouldBeOwner,
 ):
     server = hetzner.servers.get_by_id(int(callback_data.target))
     if not server:

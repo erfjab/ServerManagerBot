@@ -7,13 +7,15 @@ from eiogram.filters import IgnoreStateFilter
 from src.db import UserMessage
 from src.lang import Dialogs
 from src.keys import BotKB, BotCB, AreaType, TaskType
-from src.utils.depends import GetHetzner, ClearState
+from src.utils.depends import GetHetzner, ClearState, ShouldBeOwner
 
 router = Router()
 
 
 @router.callback_query(BotCB.filter(area=AreaType.SNAPSHOT, task=TaskType.INFO), IgnoreStateFilter())
-async def snapshots_info(callback_query: CallbackQuery, callback_data: BotCB, hetzner: GetHetzner, _: ClearState):
+async def snapshots_info(
+    callback_query: CallbackQuery, callback_data: BotCB, hetzner: GetHetzner, _: ClearState, __: ShouldBeOwner
+):
     snapshot = hetzner.images.get_by_id(int(callback_data.target))
     if not snapshot:
         return await callback_query.message.edit(text=Dialogs.SNAPSHOTS_NOT_FOUND)

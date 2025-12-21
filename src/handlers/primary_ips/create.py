@@ -6,7 +6,7 @@ from eiogram.state import StateManager, State, StateGroup
 from src.db import AsyncSession, UserMessage
 from src.keys import BotKB, BotCB, AreaType, TaskType
 from src.lang import Dialogs
-from src.utils.depends import GetHetzner
+from src.utils.depends import GetHetzner, ShouldBeOwner
 
 router = Router()
 
@@ -17,13 +17,17 @@ class PrimaryCreateForm(StateGroup):
 
 
 @router.callback_query(BotCB.filter(area=AreaType.PRIMARY_IP, task=TaskType.CREATE))
-async def primary_ips_create(callback_query: CallbackQuery, callback_data: BotCB, db: AsyncSession, state: StateManager):
+async def primary_ips_create(
+    callback_query: CallbackQuery, callback_data: BotCB, db: AsyncSession, state: StateManager, __: ShouldBeOwner
+):
     await state.upsert_context(db=db, state=PrimaryCreateForm.remark, ip_type=callback_data.target)
     return await callback_query.message.edit(text=Dialogs.PRIMARY_IPS_ENTER_REMARK, reply_markup=BotKB.primary_ips_back())
 
 
 @router.message(StateFilter(PrimaryCreateForm.remark), Text())
-async def remark_handler(message: Message, db: AsyncSession, state: StateManager, hetzner: GetHetzner, state_data: dict):
+async def remark_handler(
+    message: Message, db: AsyncSession, state: StateManager, hetzner: GetHetzner, state_data: dict, __: ShouldBeOwner
+):
     datacenters = hetzner.datacenters.get_all()
     if not datacenters:
         update = await message.answer(text=Dialogs.PRIMARY_IPS_NO_DATACENTERS)
@@ -43,6 +47,7 @@ async def select_datacenter(
     state: StateManager,
     state_data: dict,
     hetzner: GetHetzner,
+    __: ShouldBeOwner,
 ):
     datacenter = hetzner.datacenters.get_by_id(int(callback_data.target))
     if not datacenter:

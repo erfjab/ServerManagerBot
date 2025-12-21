@@ -6,7 +6,7 @@ from eiogram.state import StateManager, State, StateGroup
 from src.db import AsyncSession, UserMessage
 from src.keys import BotKB, BotCB, AreaType, TaskType
 from src.lang import Dialogs
-from src.utils.depends import GetHetzner
+from src.utils.depends import GetHetzner, ShouldBeOwner
 
 router = Router()
 
@@ -19,13 +19,15 @@ class ServerCreateForm(StateGroup):
 
 
 @router.callback_query(BotCB.filter(area=AreaType.SERVER, task=TaskType.CREATE))
-async def servers_create(callback_query: CallbackQuery, db: AsyncSession, state: StateManager, state_data: dict):
+async def servers_create(
+    callback_query: CallbackQuery, db: AsyncSession, state: StateManager, state_data: dict, __: ShouldBeOwner
+):
     await state.upsert_context(db=db, state=ServerCreateForm.remark)
     return await callback_query.message.edit(text=Dialogs.SERVERS_ENTER_REMARK, reply_markup=BotKB.servers_back())
 
 
 @router.message(StateFilter(ServerCreateForm.remark), Text())
-async def remark_handler(message: Message, db: AsyncSession, state: StateManager, hetzner: GetHetzner):
+async def remark_handler(message: Message, db: AsyncSession, state: StateManager, hetzner: GetHetzner, __: ShouldBeOwner):
     if len(message.text.split(" ")) > 1:
         update = await message.answer(text=Dialogs.SERVERS_REMARK_VALIDATION)
         return await UserMessage.add(update)
@@ -42,7 +44,12 @@ async def remark_handler(message: Message, db: AsyncSession, state: StateManager
 
 @router.callback_query(StateFilter(ServerCreateForm.datacenter), BotCB.filter(area=AreaType.SERVER, task=TaskType.CREATE))
 async def datacenter_handler(
-    callback_query: CallbackQuery, callback_data: BotCB, db: AsyncSession, state: StateManager, hetzner: GetHetzner
+    callback_query: CallbackQuery,
+    callback_data: BotCB,
+    db: AsyncSession,
+    state: StateManager,
+    hetzner: GetHetzner,
+    __: ShouldBeOwner,
 ):
     plans = hetzner.server_types.get_all()
     if not plans:
@@ -54,7 +61,12 @@ async def datacenter_handler(
 
 @router.callback_query(StateFilter(ServerCreateForm.plan), BotCB.filter(area=AreaType.SERVER, task=TaskType.CREATE))
 async def plan_handler(
-    callback_query: CallbackQuery, callback_data: BotCB, db: AsyncSession, state: StateManager, hetzner: GetHetzner
+    callback_query: CallbackQuery,
+    callback_data: BotCB,
+    db: AsyncSession,
+    state: StateManager,
+    hetzner: GetHetzner,
+    __: ShouldBeOwner,
 ):
     plan = hetzner.server_types.get_by_id(int(callback_data.target))
     if not plan:
@@ -78,6 +90,7 @@ async def image_handler(
     state: StateManager,
     state_data: dict,
     hetzner: GetHetzner,
+    __: ShouldBeOwner,
 ):
     image = hetzner.images.get_by_id(int(callback_data.target))
     if not image:

@@ -1,15 +1,18 @@
 import logging
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 from eiogram.types import User as EioUser, Message, CallbackQuery
 from sqlalchemy import String, BigInteger, DateTime, Integer, Text, JSON
 from sqlalchemy.sql import select, delete
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from src.config import BOT, TELEGRAM_ADMINS_ID
 from ..core import Base, GetDB
+
+if TYPE_CHECKING:
+    from ._access import ServerAccess
 
 
 class UserState(Base):
@@ -78,8 +81,18 @@ class User(Base):
     join_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
     online_at: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
 
+    server_accesses: Mapped[list["ServerAccess"]] = relationship("ServerAccess", backref=None, lazy="selectin")
+
+    def client_ids(self) -> set[int]:
+        return {access.client_id for access in self.server_accesses}
+
+    def get_server_ids(self, client_id: Optional[int] = None) -> set[int]:
+        if client_id is not None:
+            return {access.server_id for access in self.server_accesses if access.client_id == client_id}
+        return {access.server_id for access in self.server_accesses}
+
     @hybrid_property
-    def has_access(self) -> bool:
+    def is_owner(self) -> bool:
         return self.id in TELEGRAM_ADMINS_ID
 
     @classmethod
@@ -104,6 +117,7 @@ class User(Base):
             db.add(dbuser)
             logging.info(f"New user added: {dbuser.id} - {dbuser.full_name}")
         await db.flush()
+        await db.refresh(dbuser)
         return dbuser
 
     def __repr__(self) -> str:
